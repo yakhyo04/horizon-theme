@@ -1,0 +1,114 @@
+{%- doc -%}
+  Renders a list.
+
+  @param {object} [block] - The block object.
+  @param {string} [children] - The list content.
+  @param {string} [class] - Additional list classes.
+  @param {string} [style] - Additional list style properties.
+  @param {string} [attributes] - Additional list attributes.
+  @param {number} [gap] - The list gap.
+  @param {number} [inner_gap] - The list inner gap.
+  @param {string} [heading_case] - The list heading case. Defaults to 'uppercase' if left unset.
+  @param {string} [display_icons] - Whether to display list item icons. Defaults to true if not provided by block settings.
+  @param {string} [icon_color] - The list item icon color. Used when overriding icon colors. Defaults to value provided by block settings.
+  @param {boolean} [inherit_color_scheme] - Whether to inherit the color scheme. Defaults to true.
+  @param {string} [color_scheme] - The list color scheme. Used when inherit_color_scheme is false.
+  @param {boolean} [dividers] - Whether to show dividers. Defaults to false.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign children = children | default: block_settings.content
+  assign gap = gap | default: block_settings.gap | default: 32
+  assign inner_gap = inner_gap | default: block_settings.inner_gap | default: 16
+  assign heading_case = heading_case | default: block_settings.heading_case | default: 'uppercase'
+  assign display_icons = display_icons | default: block_settings.display_list_item_icons, allow_false: true | default: true, allow_false: true
+  assign icon_color = icon_color | default: block_settings.icon_color
+  assign inherit_color_scheme = inherit_color_scheme | default: block_settings.inherit_color_scheme | default: true
+  assign color_scheme = color_scheme | default: block_settings.color_scheme
+  assign dividers = dividers | default: block_settings.dividers
+-%}
+
+<ul
+  class="
+    list
+    {% if block != blank %}
+      list--{{ block.id }}
+      border-style
+      spacing-style
+    {% endif %}
+    {% if heading_case != 'none' %} has-uppercase-heading{% endif %}
+    {% if display_icons == false %} hide-icons{% endif %}
+    {% if inherit_color_scheme == false and color_scheme != blank %} color-{{ color_scheme }}{% endif %}
+    {% if dividers %} list--dividers{% endif %}
+    {{ class }}
+  "
+  style="
+    --gap: {{ gap }}px;
+    --list-item-gap: {{ inner_gap }}px;
+    {% if icon_color != blank %}
+      --icon-color: {{ icon_color }};
+    {% endif %}
+
+    {% if block_settings != blank %}
+      {% render 'spacing-style', settings: block_settings %}
+      {% render 'border-override', settings: block_settings %}
+    {% endif %}
+    {{ style }}
+  "
+  {% if attributes != blank %}{{ attributes }}{% endif %}
+  {% if block != blank %}{{ block.shopify_attributes }}{% endif %}
+>
+  {{ children }}
+</ul>
+
+{% stylesheet %}
+  .list {
+    flex: 0 1 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    padding-inline-start: 0;
+
+    .list-item {
+      display: flex;
+      align-items: start;
+      list-style: none;
+    }
+
+    .list-item__icon {
+      color: var(--color--blue);
+      flex: 0 0 auto;
+      height: auto;
+      margin-inline-end: 0.75rem;
+    }
+
+    .list-item__content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--margin-lg);
+      font-weight: var(--font-weight--medium);
+      margin-block-start: var(--list-item-gap, var(--margin-lg));
+
+      &:empty {
+        display: none;
+      }
+
+      &:first-child {
+        margin-block-start: 0;
+      }
+    }
+
+    .list-item__heading.heading {
+      font-weight: var(--font-weight--semibold);
+      margin-block: 0;
+    }
+
+    &.hide-icons {
+      .list-item__icon {
+        display: none;
+      }
+    }
+  }
+{% endstylesheet %}

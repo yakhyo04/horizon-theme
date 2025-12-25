@@ -1,0 +1,26 @@
+{% liquid
+  assign rating = closest.metaobject.testimonial.stars.value
+  assign stars = rating | split: '.' | first | times: 1
+%}
+
+<div class="testimonial-card__rating" role="img" aria-label="{{ stars }} stars">
+  {% for i in (1..stars) %}
+    <span class="star">
+      {{- 'rating.svg' | inline_asset_content -}}
+    </span>
+  {% endfor %}
+</div>
+
+{% schema %}  
+{
+  "name": "t:names.testimonial_rating",
+  "tag": null,
+  "settings": [],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "t:names.testimonial_rating"
+    }
+  ]
+}
+{% endschema %}

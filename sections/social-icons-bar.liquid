@@ -1,0 +1,188 @@
+{{ 'section-social-icons-bar.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign spacing_type = section.settings.spacing_type | default: 'padding'
+  assign desktop_spacing_top = section.settings.desktop_spacing_top | default: 18
+  assign desktop_spacing_bottom = section.settings.desktop_spacing_bottom | default: 18
+  assign mobile_spacing_top = section.settings.mobile_spacing_top | default: 12
+  assign mobile_spacing_bottom = section.settings.mobile_spacing_bottom | default: 12
+  assign nav_aria_label = section.settings.nav_aria_label | default: 'Social media links'
+
+  assign social_links = 'tiktok_url,pinterest_url,instagram_url,facebook_url' | split: ','
+%}
+
+<section
+  class="section section--full-width social-icons-bar social-icons-bar--{{ spacing_type }} color-{{ section.settings.color_scheme }}"
+  role="navigation"
+  aria-label="{{ nav_aria_label }}"
+  style="
+    --social-icons-desktop-top: {{ desktop_spacing_top }}px;
+    --social-icons-desktop-bottom: {{ desktop_spacing_bottom }}px;
+    --social-icons-mobile-top: {{ mobile_spacing_top }}px;
+    --social-icons-mobile-bottom: {{ mobile_spacing_bottom }}px;
+  "
+>
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+  <div class="social-icons-bar__inner">
+    <ul class="social-icons-bar__list" role="list">
+      {% for link_key in social_links %}
+        {% liquid
+          assign link_url = section.settings[link_key]
+          assign render_icon = true
+
+          if link_url != blank
+            case link_key
+              when 'facebook_url'
+                assign platform = 'facebook'
+              when 'instagram_url'
+                assign platform = 'instagram'
+              when 'tiktok_url'
+                assign platform = 'tiktok'
+              when 'pinterest_url'
+                assign platform = 'pinterest'
+            endcase
+          endif
+        %}
+
+        {% if link_url != blank %}
+          <li class="social-icons-bar__item">
+            <a
+              href="{{ link_url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="{{ platform | capitalize }}"
+            >
+              <span class="social-icons-bar__label visually-hidden">{{ platform | capitalize }}</span>
+              {% if render_icon %}
+                <svg
+                  class="social-icons-bar__icon icon-default"
+                  aria-hidden="true"
+                  focusable="false"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  {%- render 'icon', icon: platform -%}
+                </svg>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Social icons bar",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "nav_aria_label",
+      "label": "Accessible label for navigation",
+      "default": "Follow us on social media"
+    },
+    {
+      "type": "select",
+      "id": "spacing_type",
+      "label": "Spacing type",
+      "options": [
+        {
+          "value": "padding",
+          "label": "Padding"
+        },
+        {
+          "value": "margin",
+          "label": "Margin"
+        }
+      ],
+      "default": "padding"
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "desktop_spacing_top",
+      "label": "Top (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "desktop_spacing_bottom",
+      "label": "Bottom (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing_top",
+      "label": "Top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing_bottom",
+      "label": "Bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Social links"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social icons bar",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

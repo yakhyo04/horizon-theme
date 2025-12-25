@@ -1,0 +1,53 @@
+.footer-section {
+  position: relative;
+}
+
+.footer-section--padding {
+  padding-block-start: var(--footer-mobile-top, 0px);
+  padding-block-end: var(--footer-mobile-bottom, 0px);
+}
+
+.footer-section--margin {
+  margin-block-start: var(--footer-mobile-top, 0px);
+  margin-block-end: var(--footer-mobile-bottom, 0px);
+}
+
+@media screen and (min-width: 750px) {
+  .footer-section--padding {
+    padding-block-start: var(--footer-desktop-top, 36px);
+    padding-block-end: var(--footer-desktop-bottom, 36px);
+  }
+
+  .footer-section--margin {
+    margin-block-start: var(--footer-desktop-top, 36px);
+    margin-block-end: var(--footer-desktop-bottom, 36px);
+  }
+}
+
+.footer-content {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-content .footer-menu,
+.footer-content .footer-logo,
+.footer-content .footer-newsletter {
+  /* Hooks for future refinement to match Figma columns */
+}
+
+@media screen and (max-width: 989px) {
+  .footer-section .footer-content.footer-content--signup-and-columns {
+    display: flex;
+    flex-direction: column;
+    gap: var(--footer-gap, 32px);
+  }
+
+  .footer-section .footer-content.footer-content--signup-and-columns > * {
+    width: 100%;
+  }
+  .footer-content {
+    flex-direction: column;
+    gap: 32px;
+  }
+}

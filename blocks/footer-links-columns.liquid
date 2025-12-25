@@ -1,0 +1,248 @@
+{{ 'block-footer-links-columns.css' | asset_url | stylesheet_tag }}
+{{ 'block-footer-links-column.css' | asset_url | stylesheet_tag }}
+
+{% assign s = block.settings %}
+
+<div
+  class="footer-links-columns size-style spacing-style"
+  style="{% render 'size-style', settings: s %}{% render 'spacing-style', settings: s %}"
+  {{ block.shopify_attributes }}
+>
+  <div class="footer-links-columns__logo">
+    {% if s.logo != blank %}
+      {% assign logo_alt = s.logo_alt | default: shop.name %}
+      {% if s.logo_link != blank %}
+        <a href="{{ s.logo_link }}" class="footer-links-columns__logo-link">
+          {{ s.logo | image_url: width: 400 | image_tag: alt: logo_alt, class: 'footer-links-columns__logo-image' }}
+        </a>
+      {% else %}
+        {{ s.logo | image_url: width: 400 | image_tag: alt: logo_alt, class: 'footer-links-columns__logo-image' }}
+      {% endif %}
+    {% else %}
+      <span class="footer-links-columns__logo-text">
+        {{ shop.name }}
+      </span>
+    {% endif %}
+  </div>
+
+  <div
+    class="footer-links-columns__columns"
+    role="navigation"
+    aria-label="{{ s.navigation_aria_label | default: 'Footer primary navigation' | strip | escape }}"
+  >
+    {%- assign menu_1 = s.menu_1 -%}
+    {%- assign heading_1 = s.heading_1 | default: menu_1.title -%}
+    {% if menu_1 != blank or heading_1 != blank %}
+      <div class="footer-links-columns__column">
+        {% if heading_1 != blank %}
+          <h2 class="footer-links-column__heading">{{ heading_1 }}</h2>
+        {% endif %}
+        {% if menu_1 %}
+          <ul class="footer-links-column__list" role="list">
+            {% for link in menu_1.links %}
+              <li class="footer-links-column__item">
+                <a class="footer-links-column__link" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- assign menu_2 = s.menu_2 -%}
+    {%- assign heading_2 = s.heading_2 | default: menu_2.title -%}
+    {% if menu_2 != blank or heading_2 != blank %}
+      <div class="footer-links-columns__column">
+        {% if heading_2 != blank %}
+          <h2 class="footer-links-column__heading">{{ heading_2 }}</h2>
+        {% endif %}
+        {% if menu_2 %}
+          <ul class="footer-links-column__list" role="list">
+            {% for link in menu_2.links %}
+              <li class="footer-links-column__item">
+                <a class="footer-links-column__link" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- assign menu_3 = s.menu_3 -%}
+    {%- assign heading_3 = s.heading_3 | default: menu_3.title -%}
+    {% if menu_3 != blank or heading_3 != blank %}
+      <div class="footer-links-columns__column">
+        {% if heading_3 != blank %}
+          <h2 class="footer-links-column__heading">{{ heading_3 }}</h2>
+        {% endif %}
+        {% if menu_3 %}
+          <ul class="footer-links-column__list" role="list">
+            {% for link in menu_3.links %}
+              <li class="footer-links-column__item">
+                <a class="footer-links-column__link" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- assign menu_4 = s.menu_4 -%}
+    {%- assign heading_4 = s.heading_4 | default: menu_4.title -%}
+    {% if menu_4 != blank or heading_4 != blank %}
+      <div class="footer-links-columns__column">
+        {% if heading_4 != blank %}
+          <h2 class="footer-links-column__heading">{{ heading_4 }}</h2>
+        {% endif %}
+        {% if menu_4 %}
+          <ul class="footer-links-column__list" role="list">
+            {% for link in menu_4.links %}
+              <li class="footer-links-column__item">
+                <a class="footer-links-column__link" href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer links columns",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "text",
+      "id": "logo_alt",
+      "label": "Logo alt text"
+    },
+    {
+      "type": "url",
+      "id": "logo_link",
+      "label": "Logo link"
+    },
+    {
+      "type": "text",
+      "id": "navigation_aria_label",
+      "label": "Navigation aria label",
+      "default": "Footer primary navigation"
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "text",
+      "id": "heading_1",
+      "label": "Heading",
+      "default": "Customer care"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "text",
+      "id": "heading_2",
+      "label": "Heading",
+      "default": "About"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "text",
+      "id": "heading_3",
+      "label": "Heading",
+      "default": "Information"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_3",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 4"
+    },
+    {
+      "type": "text",
+      "id": "heading_4",
+      "label": "Heading",
+      "default": "Contact us"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_4",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer links columns"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,273 @@
+{%- doc -%}
+  @description Renders recently viewed products.
+  
+  @param {string} classes - classes to apply to the recently viewed products
+  @param {string} layout_type - layout type of the recently viewed products
+  @param {boolean} carousel_on_mobile - whether to show the carousel on mobile
+  @param {number} columns_gap - columns gap of the recently viewed products
+  @param {object} section_settings - section settings
+
+  Uses localStorage to track viewed products and fetches them via Search API
+{%- enddoc -%}
+
+<script
+  src="{{ 'recently-viewed-products.js' | asset_url }}"
+  type="module"
+></script>
+
+{% assign block_settings = block.settings %}
+{% assign max_products = section_settings.max_products | default: block_settings.max_products | default: 4 %}
+
+<recently-viewed-products
+  id="recently-viewed-{{ block.id }}"
+  class="recently-viewed-products"
+  data-section-id="{{ section.id }}"
+  data-max-products="{{ max_products }}"
+  {% if request.visual_preview_mode %}
+    data-shopify-editor-preview
+  {% endif %}
+  data-testid="recently-viewed-products-block"
+  {{ block.shopify_attributes }}
+>
+  {%- comment -%}
+    The actual product list will be rendered by JavaScript after fetching from Search API.
+    We show skeletons initially that will be replaced with real content.
+  {%- endcomment -%}
+
+  {%- if search.performed and search.results_count > 0 -%}
+    {% liquid
+      assign products = search.results
+    %}
+    {% capture list_items %}
+      {% for product in products limit: max_products %}
+        <div class="resource-list__item">
+          {% content_for 'block',
+            type: '_product-card',
+            id: 'static-product-card',
+            closest.product: product
+          %}
+        </div>
+        {% if layout_type == 'carousel' or carousel_on_mobile %}
+          {% unless forloop.last %}
+            <!--@list/split-->
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+    {% endcapture %}
+
+    {% liquid
+      assign slide_content = list_items | strip
+      assign slides = slide_content | split: '<!--@list/split-->'
+
+      if products != blank and products.size > 0
+        assign has_products = 'true'
+      else
+        assign has_products = 'false'
+      endif
+    %}
+
+    <div
+      class="
+        resource-list
+        {% if carousel_on_mobile and layout_type != 'carousel' %}
+          hidden--mobile
+        {% endif %}
+        {{ classes }}
+      "
+      {% if layout_type == 'grid' %}
+        data-testid="resource-list-grid"
+      {% endif %}
+      data-has-products="{{ has_products }}"
+    >
+      {% case layout_type %}
+        {% when 'grid' %}
+          {{ list_items }}
+        {% when 'carousel' %}
+          {% render 'resource-list-carousel',
+            ref: 'recentlyViewedCarousel',
+            slides: slides,
+            slide_count: products.size,
+            settings: section_settings
+          %}
+      {% endcase %}
+    </div>
+
+    {% if carousel_on_mobile and layout_type != 'carousel' %}
+      {% liquid
+        assign mobile_carousel_gap = columns_gap
+      %}
+      <div
+        class="
+          resource-list
+          hidden--desktop
+          force-full-width
+        "
+        style="--resource-list-gap: {{ mobile_carousel_gap }}px;"
+      >
+        {% render 'resource-list-carousel',
+          ref: 'recentlyViewedCarouselMobile',
+          slides: slides,
+          slide_count: products.size,
+          settings: section_settings
+        %}
+      </div>
+    {% endif %}
+  {%- else -%}
+    <div class="resource-list resource-list--grid recently-viewed-products__skeleton">
+      {% for i in (1..max_products) %}
+        <div
+          class="resource-list__item recently-viewed-products__skeleton-item"
+          aria-label="{{ 'accessibility.loading_recently_viewed' | t }}"
+        ></div>
+      {% endfor %}
+    </div>
+  {%- endif -%}
+</recently-viewed-products>
+
+{% stylesheet %}
+  .recently-viewed-products-wrapper {
+    width: 100%;
+  }
+
+  .recently-viewed-products-wrapper:has(recently-viewed-products[data-shopify-editor-preview]) {
+    width: 100vw;
+  }
+
+  .recently-viewed-products {
+    display: block;
+  }
+
+  .recently-viewed-products.hidden {
+    display: none;
+  }
+
+  .recently-viewed-products__skeleton-item {
+    aspect-ratio: 3 / 4;
+    background-color: var(--color-foreground);
+    opacity: var(--skeleton-opacity);
+    border-radius: 4px;
+  }
+
+  .recently-viewed-products__empty {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(var(--color-foreground), 0.6);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.recently_viewed_products",
+  "class": "recently-viewed-products-wrapper",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.recently_viewed_products_info"
+    },
+    {
+      "type": "header",
+      "content": "t:content.cards_layout"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:settings.product_count",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.recently_viewed_products",
+      "category": "t:categories.product",
+      "settings": {},
+      "blocks": {
+        "static-product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4
+          },
+          "blocks": {
+            "product-card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
+            "product_title": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
+            "price": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["product-card-gallery", "product_title", "price"]
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

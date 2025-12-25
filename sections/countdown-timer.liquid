@@ -1,0 +1,260 @@
+{{ 'section-countdown-timer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'countdown-timer.js' | asset_url }}" type="module"></script>
+
+{%- liquid
+  assign body_before_timer = section.settings.body_before_timer
+  assign body_before_timer_mobile = section.settings.body_before_timer_mobile
+
+  assign body_after_timer = section.settings.body_after_timer
+
+  assign start_date = section.settings.start_date
+  assign start_time = section.settings.start_time | default: '00:00'
+
+  assign end_date = section.settings.end_date
+  assign end_time = section.settings.end_time | default: '00:00'
+
+  assign background_color = section.settings.background_color
+  assign text_color = section.settings.text_color
+
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign padding_top_mobile = section.settings.padding_top_mobile
+  assign padding_bottom_mobile = section.settings.padding_bottom_mobile
+
+  assign countdown_finish = 'message'
+-%}
+
+<style>
+  #countdown-timer-{{ section.id }} {
+    --countdown-bg-color: {{ background_color }};
+    --countdown-text-color: {{ text_color }};
+    --countdown-padding-top: {{ padding_top }}px;
+    --countdown-padding-bottom: {{ padding_bottom }}px;
+    --countdown-padding-top-mobile: {{ padding_top_mobile }}px;
+    --countdown-padding-bottom-mobile: {{ padding_bottom_mobile }}px;
+  }
+</style>
+
+{% assign templates_to_show = section.settings.template_visibility | split: ', ' %}
+{% if templates_to_show contains template.name or templates_to_show == blank %}
+  {%- if start_date != blank and end_date != blank -%}
+    <countdown-timer
+      id="countdown-timer-{{ section.id }}"
+      class="countdown-timer"
+      data-countdown-timer-start-date="{{ start_date }} {{ start_time }}"
+      data-countdown-timer-end-date="{{ end_date }} {{ end_time }}"
+      data-countdown-timer-finish-type="{{ countdown_finish }}"
+    >
+      <div class="countdown-timer__inner">
+        <div class="countdown-timer__content">
+          <div class="countdown-timer__messages">
+            <div
+              class="countdown-timer__message"
+              ref="ongoingMessage"
+              show
+            >
+              <div class="countdown-timer__message-body countdown-timer__message-body--desktop">
+                {{ body_before_timer }}
+              </div>
+
+              <div class="countdown-timer__message-body countdown-timer__message-body--mobile">
+                {{ body_before_timer_mobile }}
+              </div>
+            </div>
+
+            <div
+              class="countdown-timer__message"
+              ref="finishedMessage"
+            >
+              <div class="countdown-timer__message-body">
+                {{ body_after_timer }}
+              </div>
+            </div>
+          </div>
+
+          <div class="countdown-timer__timer" ref="timer" show>
+            <div class="countdown-timer__time countdown-timer__time--days" ref="daysWrapper">
+              <div class="countdown-timer__time-parts" ref="days"></div>
+              <span class="countdown-timer__time-label">d</span>
+            </div>
+
+            <div class="countdown-timer__time countdown-timer__time--hours" ref="hoursWrapper">
+              <div class="countdown-timer__time-parts" ref="hours"></div>
+              <span class="countdown-timer__time-label">h</span>
+            </div>
+
+            <div class="countdown-timer__time countdown-timer__time--minutes" ref="minutesWrapper">
+              <div class="countdown-timer__time-parts" ref="minutes"></div>
+              <span class="countdown-timer__time-label">m</span>
+            </div>
+
+            <div class="countdown-timer__time countdown-timer__time--seconds" ref="secondsWrapper">
+              <div class="countdown-timer__time-parts" ref="seconds"></div>
+              <span class="countdown-timer__time-label">s</span>
+            </div>
+          </div>
+        </div>
+
+        {% if section.settings.link != blank %}
+          <div class="countdown-timer__link" ref="cta" show>
+            <a href="{{ section.settings.link }}" class="button countdown-timer__link-button">
+              {{ section.settings.link_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </countdown-timer>
+  {%- endif -%}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Countdown timer",
+  "class": "shopify-section--countdown-timer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Visibility Settings"
+    },
+    {
+      "type": "textarea",
+      "id": "template_visibility",
+      "label": "Template visibility",
+      "info": "Enter the templates to show the timer on. Separate with commas. Leave blank to show on all templates.",
+      "default": "index, product, collection, cart"
+    },
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "richtext",
+      "id": "body_before_timer",
+      "label": "Body",
+      "default": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et quam nec nisl lacinia ultrices. Nullam nec nisl lacinia, ultrices nisl nec, ultrices nisl.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "body_before_timer_mobile",
+      "label": "Body (Mobile)",
+      "default": "<p>Offer ends</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "body_after_timer",
+      "label": "Body (Timer finished)",
+      "default": "<p>The wait is over….</p>"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text",
+      "default": "Sign up to get notified"
+    },
+    {
+      "type": "header",
+      "content": "Timer Configuration"
+    },
+    {
+      "type": "text",
+      "id": "start_date",
+      "label": "Start Date",
+      "info": "Format: MM/DD/YYYY",
+      "placeholder": "Format: MM/DD/YYYY"
+    },
+    {
+      "type": "text",
+      "id": "start_time",
+      "label": "Start Time",
+      "info": "Format: HH:MM (24-hour)",
+      "placeholder": "HH:MM",
+      "default": "12:30"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End Date",
+      "info": "Format: MM/DD/YYYY",
+      "placeholder": "Format: MM/DD/YYYY"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End Time",
+      "info": "Format: HH:MM (24-hour)",
+      "placeholder": "HH:MM",
+      "default": "12:30"
+    },
+    {
+      "type": "header",
+      "content": "Background & Text Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#232323"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#F5F3EF"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown timer"
+    }
+  ]
+}
+{% endschema %}

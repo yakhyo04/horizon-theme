@@ -1,0 +1,106 @@
+<div class="section-header">
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.section_header",
+  "blocks": [
+    {
+      "type": "heading",
+    },
+    {
+      "type": "body",
+    },
+    {
+      "type": "button",
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit"
+        },
+        {
+          "value": "100%",
+          "label": "t:options.fill"
+        }
+      ],
+      "default": "fit-content"
+    },
+    {
+      "type": "select",
+      "id": "max_width",
+      "label": "t:settings.max_width",
+      "options": [
+        {
+          "value": "narrow",
+          "label": "t:options.narrow"
+        },
+        {
+          "value": "normal",
+          "label": "t:options.normal"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "normal"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.section_header",
+      "blocks": {
+        "text-0": {
+          "type": "body",
+          "settings": {
+            "text": "t:html_defaults.section_header_text_0",
+            "type_preset": "body-large"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "t:html_defaults.section_header_heading",
+            "type_preset": "t1"
+          }
+        },
+        "text-1": {
+          "type": "body",
+          "settings": {
+            "text": "t:html_defaults.section_header_text_1",
+            "type_preset": "body-large"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "t:text_defaults.section_header_button_label"
+          }
+        }
+      },
+      "block_order": ["text-0", "heading", "text-1", "button"],
+      "category": "t:categories.other_sections"
+    }
+  ]
+}
+{% endschema %}

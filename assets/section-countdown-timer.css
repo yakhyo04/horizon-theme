@@ -1,0 +1,136 @@
+.countdown-timer {
+  display: block;
+  background-color: var(--countdown-bg-color);
+  padding-top: var(--countdown-padding-top);
+  padding-bottom: var(--countdown-padding-bottom);
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.countdown-timer__inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+}
+
+.countdown-timer__content {
+  display: flex;
+  gap: 9px;
+}
+
+.countdown-timer__message {
+  display: none;
+
+  p {
+    margin: 0;
+  }
+}
+
+.countdown-timer__message[show] {
+  display: block;
+}
+
+.countdown-timer__message-body,
+.countdown-timer__time-parts {
+  font-family: "Proxima Nova";
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: 1.92px;
+  color: var(--countdown-text-color);
+}
+
+.countdown-timer__time-label {
+  color: var(--countdown-text-color);
+  font-family: "Proxima Nova";
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 162%;
+  letter-spacing: 0.88px;
+  text-transform: uppercase;
+}
+
+.countdown-timer__message-body--desktop {
+  display: block;
+}
+
+.countdown-timer__message-body--mobile {
+  display: none;
+}
+
+.countdown-timer__timer {
+  display: none;
+  gap: 9px;
+}
+
+.countdown-timer__timer[show] {
+  display: flex;
+}
+
+.countdown-timer__link {
+  display: none;
+}
+
+.countdown-timer__link[show] {
+  display: block;
+}
+
+.countdown-timer__time {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--countdown-text-color);
+
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-timer__time-parts {
+  display: flex;
+  align-items: center;
+}
+
+.countdown-timer__link-button {
+  padding: 8px 16px;
+  background-color: var(--color-white);
+  color: #232323;
+  font-family: "Proxima Nova";
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .countdown-timer {
+    padding-top: var(--countdown-padding-top-mobile);
+    padding-bottom: var(--countdown-padding-bottom-mobile);
+  }
+
+  .countdown-timer__inner {
+    flex-direction: column;
+  }
+
+  .countdown-timer__message-body,
+  .countdown-timer__time-parts {
+    font-size: 20px;
+    letter-spacing: 1.6px;
+  }
+
+  .countdown-timer__message-body--desktop {
+    display: none;
+  }
+
+  .countdown-timer__message-body--mobile {
+    display: block;
+  }
+
+  .countdown-timer__link {
+    width: 100%;
+  }
+
+  .countdown-timer__link-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,255 @@
+{{ 'section-as-seen-in.css' | asset_url | stylesheet_tag }}
+
+{% assign heading = section.settings.heading | default: 'AS SEEN IN' %}
+{% assign logos_aria_label = section.settings.logos_aria_label | default: heading %}
+{% assign spacing_type = section.settings.spacing_type | default: 'padding' %}
+{% assign desktop_spacing_top = section.settings.desktop_spacing_top | default: 24 %}
+{% assign desktop_spacing_bottom = section.settings.desktop_spacing_bottom | default: 24 %}
+{% assign mobile_spacing_top = section.settings.mobile_spacing_top | default: 16 %}
+{% assign mobile_spacing_bottom = section.settings.mobile_spacing_bottom | default: 16 %}
+
+<section
+  class="section section--page-width as-seen-in as-seen-in--{{ spacing_type }} color-{{ section.settings.color_scheme }}"
+  aria-labelledby="AsSeenInHeading-{{ section.id }}"
+  aria-label="{{ logos_aria_label }}"
+  role="region"
+  style="
+    --as-seen-in-desktop-top: {{ desktop_spacing_top }}px;
+    --as-seen-in-desktop-bottom: {{ desktop_spacing_bottom }}px;
+    --as-seen-in-mobile-top: {{ mobile_spacing_top }}px;
+    --as-seen-in-mobile-bottom: {{ mobile_spacing_bottom }}px;
+  "
+>
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+  <div class="as-seen-in__inner">
+    <p
+      id="AsSeenInHeading-{{ section.id }}"
+      class="as-seen-in__heading"
+      role="heading"
+      aria-level="2"
+    >
+      {{ heading }}
+    </p>
+
+    {% if section.blocks.size > 0 %}
+      <ul class="as-seen-in__logos" role="list">
+        {% for block in section.blocks %}
+          {% assign image = block.settings.logo_image %}
+          {% assign max_height = block.settings.max_height | default: 52 %}
+          {% if image != blank %}
+            <li class="as-seen-in__logo-item" {{ block.shopify_attributes }}>
+              {% if block.settings.link != blank %}
+                <a
+                  href="{{ block.settings.link }}"
+                  class="as-seen-in__logo-link"
+                  {% if block.settings.open_in_new_tab %}
+                    target="_blank" rel="noopener noreferrer"
+                  {% endif %}
+                  aria-label="{{ block.settings.accessible_name | default: block.settings.alt | default: heading | escape }}"
+                >
+              {% else %}
+                <div class="as-seen-in__logo-wrapper">
+              {% endif %}
+
+              {%- assign style_max_height = 'max-height: ' | append: max_height | append: 'px; width: auto; height: auto;' -%}
+              {{
+                image
+                | image_url: width: 300
+                | image_tag:
+                  width: image.width,
+                  height: image.height,
+                  alt: block.settings.alt,
+                  class: 'as-seen-in__logo-image',
+                  style: style_max_height,
+                  loading: 'lazy'
+              }}
+
+              {% if block.settings.link != blank %}
+                </a>
+              {% else %}
+                </div>
+              {% endif %}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  (function () {
+    if (window._asSeenInLogosInit) return;
+    window._asSeenInLogosInit = true;
+
+    function centerAsSeenInLogos() {
+      if (!window.matchMedia('(max-width: 767px)').matches) {
+        return;
+      }
+
+      var lists = document.querySelectorAll('.as-seen-in__logos');
+      lists.forEach(function (list) {
+        if (!list) return;
+        var maxScroll = list.scrollWidth - list.clientWidth;
+        if (maxScroll <= 0) return;
+        list.scrollLeft = maxScroll / 2;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', centerAsSeenInLogos);
+    window.addEventListener('load', centerAsSeenInLogos);
+    window.addEventListener('resize', centerAsSeenInLogos);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "As seen in",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "AS SEEN IN"
+    },
+    {
+      "type": "text",
+      "id": "logos_aria_label",
+      "label": "Accessible label for logo list",
+      "info": "Screen reader description for the group of logos.",
+      "default": "Publications where our brand has been featured"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "spacing_type",
+      "label": "Spacing type",
+      "options": [
+        {
+          "value": "padding",
+          "label": "Padding"
+        },
+        {
+          "value": "margin",
+          "label": "Margin"
+        }
+      ],
+      "default": "padding"
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "desktop_spacing_top",
+      "label": "Top (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "desktop_spacing_bottom",
+      "label": "Bottom (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing_top",
+      "label": "Top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_spacing_bottom",
+      "label": "Bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alternative text",
+          "info": "Describes the publication or brand for screen readers.",
+          "default": "Publication logo"
+        },
+        {
+          "type": "text",
+          "id": "accessible_name",
+          "label": "Accessible link label",
+          "info": "Optional, used when logo is a link (e.g. 'Read our feature on Forbes')."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Logo link"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open link in new tab",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "max_height",
+          "label": "Max logo height",
+          "min": 16,
+          "max": 160,
+          "step": 4,
+          "unit": "px",
+          "default": 52
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "As seen in",
+      "category": "Text",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

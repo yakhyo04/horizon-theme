@@ -1,0 +1,16 @@
+{% doc %}
+  Returns a fluid font size value for a given preset.
+
+  @param {string} preset - The preset to return the font size for
+  @return {string} The fluid font size value
+{% enddoc %}
+
+{%- capture value -%}
+  clamp(
+      calc(var(--font-size--{{ preset }}-min) * 1px),
+      calc(var(--font-size--{{ preset }}-min) * 1px + (var(--font-size--{{ preset }}-max) - var(--font-size--{{ preset }}-min)) * ((100vw - var(--vw-start) * 1px) / (var(--vw-end) - var(--vw-start)))),
+      calc(var(--font-size--{{ preset }}-max) * 1px)
+    );
+{%- endcapture -%}
+
+{{- value | strip | strip_newlines -}}

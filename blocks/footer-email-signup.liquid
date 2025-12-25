@@ -1,0 +1,149 @@
+{{ 'block-footer-email-signup.css' | asset_url | stylesheet_tag }}
+
+{% assign block_settings = block.settings %}
+
+<div
+  class="footer-email-signup size-style spacing-style"
+  style="{% render 'size-style', settings: block_settings %}{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  {% if block_settings.heading != blank %}
+    <h2 class="footer-email-signup__heading">
+      {{ block_settings.heading }}
+    </h2>
+  {% endif %}
+
+  {%- form 'customer', class: 'footer-email-signup__form' -%}
+    <div class="footer-email-signup__row">
+      <div class="footer-email-signup__input-wrapper">
+        <label
+          for="FooterEmailInput-{{ block.id }}"
+          class="visually-hidden"
+        >
+          {{ 'blocks.email_signup.label' | t }}
+        </label>
+        <input
+          id="FooterEmailInput-{{ block.id }}"
+          class="footer-email-signup__input"
+          type="email"
+          name="contact[email]"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="email"
+          placeholder="{{ 'blocks.email_signup.placeholder' | t }}"
+          required
+          {% if form.errors %}
+            autofocus
+            aria-invalid="true"
+            aria-describedby="FooterEmailSignup-message-error-{{ block.id }}"
+          {% elsif form.posted_successfully? %}
+            aria-describedby="FooterEmailSignup-message-success-{{ block.id }}"
+          {% endif %}
+        >
+      </div>
+      <button
+        class="footer-email-signup__button"
+        type="submit"
+      >
+        {{ 'actions.sign_up' | t | upcase }}
+      </button>
+    </div>
+
+    {%- if form.errors -%}
+      <div
+        id="FooterEmailSignup-message-error-{{ block.id }}"
+        class="email-signup__message email-signup__message--error"
+        tabindex="-1"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+          focusable="false"
+          aria-hidden="true"
+          class="icon-error"
+        >
+          {%- render 'icon', icon: 'error' -%}
+        </svg>
+        {{- form.errors.translated_fields.email | capitalize }}
+        {{ form.errors.messages.email -}}
+      </div>
+    {%- endif -%}
+
+    {%- if form.posted_successfully? -%}
+      <div
+        id="FooterEmailSignup-message-success-{{ block.id }}"
+        class="email-signup__message email-signup__message--success"
+        tabindex="-1"
+      >
+        <span class="svg-wrapper icon-success">
+          {{ 'icon-checkmark.svg' | inline_asset_content }}
+        </span>
+        <p class="email-signup__message-text">{{ 'blocks.email_signup.success' | t }}</p>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "Footer email signup",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Stay Connected"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer email signup"
+    }
+  ]
+}
+{% endschema %}

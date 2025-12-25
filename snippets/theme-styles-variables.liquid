@@ -1,0 +1,968 @@
+{%- liquid
+  assign font_family_heading = "Editor's Note"
+  assign font_family_subheading = 'Proxima Nova'
+  assign font_family_body = 'Proxima Nova'
+
+  assign font_style_heading = 'normal'
+  assign font_style_subheading = 'normal'
+  assign font_style_body = 'normal'
+
+  assign font_weight_heading = 300
+  assign font_weight_subheading = 600
+  assign font_weight_body = 400
+-%}
+
+{% style %}
+  {%- render 'font-face', family: "Editor's Note", weight: 'light' -%}
+  {%- render 'font-face', family: "Editor's Note", weight: 'light', style: 'italic' -%}
+  {%- render 'font-face', family: "Proxima Nova" -%}
+  {%- render 'font-face', family: "Proxima Nova", style: 'italic' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'medium' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'medium', style: 'italic' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'semibold' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'semibold', style: 'italic' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'bold' -%}
+  {%- render 'font-face', family: "Proxima Nova", weight: 'bold', style: 'italic' -%}
+
+  @property --_w {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 100vw;
+  }
+
+  @property --_h {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 100vh;
+  }
+
+  :root {
+    --vw: tan(atan2(var(--_w), 1px));
+    --vh: tan(atan2(var(--_h), 1px));
+
+    --vw-unit: calc(var(--vw) / 100);
+    --vh-unit: calc(var(--vh) / 100);
+
+    /* Page Layout */
+    --sidebar-width: 20rem;
+    --narrow-content-width: 36rem;
+    --normal-content-width: 42rem;
+    --wide-content-width: 46rem;
+    --narrow-page-width: 90rem;
+    --normal-page-width: 100rem;
+    --wide-page-width: 120rem;
+
+    /* Section Heights */
+    --section-height-small: 15rem;
+    --section-height-medium: 25rem;
+    --section-height-large: 35rem;
+
+    @media screen and (min-width: 40em) {
+      --section-height-small: 40svh;
+      --section-height-medium: 55svh;
+      --section-height-large: 70svh;
+    }
+
+    @media screen and (min-width: 60em) {
+      --section-height-small: 50svh;
+      --section-height-medium: 65svh;
+      --section-height-large: 80svh;
+    }
+
+    --ratio-portrait: {{ settings.image_aspect_ratio_portrait }};
+    --ratio-square: {{ settings.image_aspect_ratio_square }};
+    --ratio-landscape: {{ settings.image_aspect_ratio_landscape }};
+
+    /* Letter spacing */
+    --letter-spacing-sm: 0.06em;
+    --letter-spacing-md: 0.13em;
+
+    /* Font families */
+    /* TODO: Replace fallbacks */
+    --font-body--family: "{{ font_family_body }}";
+    --font-body--style: {{ font_style_body }};
+    --font-body--weight: {{ font_weight_body }};
+    --font-subheading--family: "{{ font_family_subheading }}";
+    --font-subheading--style: {{ font_style_subheading }};
+    --font-subheading--weight: {{ font_weight_subheading }};
+    --font-heading--family: "{{ font_family_heading }}";
+    --font-heading--style: {{ font_style_heading }};
+    --font-heading--weight: {{ font_weight_heading }};
+
+    /* Margin sizes */
+    --font-t1--spacing: 0.25em;
+    --font-t2--spacing: 0.25em;
+    --font-h1--spacing: 0.25em;
+    --font-h2--spacing: 0.25em;
+    --font-h3--spacing: 0.25em;
+    --font-h4--spacing: 0.25em;
+    --font-h5--spacing: 0.25em;
+    --font-h6--spacing: 0.25em;
+    --font-paragraph--spacing: 0.5em;
+
+    /* Heading colors */
+    --font-t1--color: var(--color-foreground-heading);
+    --font-t2--color: var(--color-foreground-heading);
+    --font-h1--color: var(--color-foreground-heading);
+    --font-h2--color: var(--color-foreground-heading);
+    --font-h3--color: var(--color-foreground-heading);
+    --font-h4--color: var(--color-foreground-heading);
+    --font-h5--color: var(--color-foreground-heading);
+    --font-h6--color: var(--color-foreground-heading);
+
+    /** Z-Index / Layering */
+    --layer-section-background: -2;
+    --layer-lowest: -1;
+    --layer-base: 0;
+    --layer-flat: 1;
+    --layer-raised: 2;
+    --layer-heightened: 4;
+    --layer-sticky: 8;
+    --layer-window-overlay: 10;
+    --layer-header-menu: 12;
+    --layer-overlay: 16;
+    --layer-menu-drawer: 18;
+    --layer-temporary: 20;
+
+    /* Max-width / Measure */
+    --max-width--body-wide: 104ch;
+    --max-width--body-normal: 74ch;
+    --max-width--body-narrow: 48ch;
+
+    --max-width--heading-normal: 50ch;
+    --max-width--heading-narrow: 30ch;
+
+    --max-width--display-normal: 22ch;
+    --max-width--display-narrow: 16ch;
+    --max-width--display-tight: 5ch;
+
+    /* Letter-spacing / Tracking */
+    --letter-spacing--display: var(--letter-spacing--base);
+
+    --letter-spacing--heading-tight: var(--letter-spacing--tight);
+    --letter-spacing--heading-normal: var(--letter-spacing--base);
+    --letter-spacing--heading-loose: var(--letter-spacing--loose);
+
+    --letter-spacing--body-tight: var(--letter-spacing--tight);
+    --letter-spacing--body-normal: var(--letter-spacing--base);
+    --letter-spacing--body-loose: var(--letter-spacing--loose);
+
+    /* Hardcoded font sizes */
+    --font-size--2xs: 0.625rem;
+    --font-size--xs: 0.8125rem;
+    --font-size--sm: 0.875rem;
+    --font-size--md: 1rem;
+    --font-size--lg: 1.125rem;
+    --font-size--xl: 1.25rem;
+    --font-size--2xl: 1.5rem;
+    --font-size--3xl: 2rem;
+    --font-size--4xl: 2.5rem;
+    --font-size--5xl: 3rem;
+    --font-size--6xl: 3.5rem;
+
+    /* Menu font sizes */
+    --menu-font-sm--size: 0.875rem;
+    --menu-font-sm--line-height: calc(1.1 + 0.5 * min(16 / 14));
+    --menu-font-md--size: 1rem;
+    --menu-font-md--line-height: calc(1.1 + 0.5 * min(16 / 16));
+    --menu-font-lg--size: 1.125rem;
+    --menu-font-lg--line-height: calc(1.1 + 0.5 * min(16 / 18));
+    --menu-font-xl--size: 1.25rem;
+    --menu-font-xl--line-height: calc(1.1 + 0.5 * min(16 / 20));
+    --menu-font-2xl--size: 1.75rem;
+    --menu-font-2xl--line-height: calc(1.1 + 0.5 * min(16 / 28));
+
+    /* Colors */
+    --color-error: #8B0000;
+    --color-success: #006400;
+    --color-white: #FFFFFF;
+    --color-white-rgb: 255 255 255;
+    --color-black: #000000;
+    --color-instock: #3ED660;
+    --color-lowstock: #EE9441;
+    --color-outofstock: #C8C8C8;
+
+    /* Button Typography */
+    --font-family--button: var(--font-family--primary);
+    --font-size--button: 0.75rem; /* 12px */
+    --font-size--button-large: 0.875rem; /* 14px */
+    --font-style--button: normal;
+    --font-weight--button: var(--font-weight--semibold);
+    --letter-spacing--button: var(--letter-spacing--spacious);
+    --line-height--button: 1.25;
+    --text-align--button: center;
+    --text-decoration--button: none;
+    --case--button: uppercase;
+
+    /* Button Layout */
+    --border-color--button: var(--color-primary-button-border);
+    --border-radius--button: 0px;
+    --border-width--button: 1px;
+
+    /* Button Transitions */
+    /* TODO: Update */
+    --animation-speed--button: var(--animation-speed);
+    /* TODO: Update */
+    --animation-easing--button: var(--animation-easing);
+    --animation-values--button: var(--animation-speed--button) var(--animation-easing--button);
+    --transition-property--button: color, box-shadow, background-color;
+
+    /* Button: Proxima Nova, Semibold, 12px, weight 600, line-height 100% */
+    --o-button--font-family: var(--font-family--button);
+    --o-button--font-size: var(--font-size--button);
+    --o-button--font-style: var(--font-style--button);
+    /* TODO: Change this to XL maybe? And make large the increased padding version of standard? */
+    /* TODO!: OR JUST MAKE THE PADDING A COMPLETELY SEPARATE VARIANT PROP */
+    --o-button-large--font-size: var(--font-size--button-large);
+    --o-button--font-weight: var(--font-weight--button);
+    --o-button--line-height: var(--line-height--button);
+    --o-button--letter-spacing: var(--letter-spacing--button);
+    --o-button--text-align: var(--text-align--button);
+    --o-button--text-decoration: var(--text-decoration--button);
+    --o-button--text-transform: var(--case--button);
+
+    --o-button--border-color: var(--border-color--button);
+    --o-button--border-radius: var(--border-radius--button);
+    --o-button--border-width: var(--border-width--button);
+
+
+    --o-button--color: var(--color-primary-button-text);
+    --o-button--background-color: var(--color-primary-button-background);
+    --o-button--border-color: var(--color-primary-button-border);
+
+    --o-button--padding-block: 8px; /* 8px */;
+    --o-button--padding-inline: 20px; /* 20px */;
+
+    --o-button-small--padding-block: 8px; /* 8px */;
+    --o-button-small--padding-inline: 12px; /* 12px */;
+
+    --o-button-large--padding-block: 12px; /* 12px */;
+    --o-button-large--padding-inline: 20px; /* 20px */;
+
+    --o-button-small--min-height: 2rem;
+    --o-button--min-height: 2rem;
+    --o-button-large--min-height: 2.75rem;
+
+    --o-button-small--min-width: 5.5rem;
+    --o-button--min-width: 7.5rem;
+    --o-button-large--min-width: 9rem;
+
+    --o-button--transition-property: var(--transition-property--button);
+    --o-button--transition-duration: var(--animation-speed--button);
+    --o-button--transition-timing-function: var(--animation-easing--button);
+
+    /* Opacity */
+    --opacity-5: 0.05;
+    --opacity-8: 0.08;
+    --opacity-10: 0.1;
+    --opacity-15: 0.15;
+    --opacity-20: 0.2;
+    --opacity-25: 0.25;
+    --opacity-30: 0.3;
+    --opacity-40: 0.4;
+    --opacity-50: 0.5;
+    --opacity-60: 0.6;
+    --opacity-70: 0.7;
+    --opacity-80: 0.8;
+    --opacity-85: 0.85;
+    --opacity-90: 0.9;
+    --opacity-subdued-text: var(--opacity-70);
+
+    --shadow-button: 0 2px 3px rgb(0 0 0 / 20%);
+    --gradient-image-overlay: linear-gradient(to top, rgb(0 0 0 / 0.5), transparent);
+
+    /* Spacing */
+    --margin-3xs: 0.125rem;
+    --margin-2xs: 0.3rem;
+    --margin-xs: 0.5rem;
+    --margin-sm: 0.7rem;
+    --margin-md: 0.8rem;
+    --margin-lg: 1rem;
+    --margin-xl: 1.25rem;
+    --margin-2xl: 1.5rem;
+    --margin-3xl: 1.75rem;
+    --margin-4xl: 2rem;
+    --margin-5xl: 3rem;
+    --margin-6xl: 5rem;
+
+    --scroll-margin: 50px;
+
+    --padding-3xs: 0.125rem;
+    --padding-2xs: 0.25rem;
+    --padding-xs: 0.5rem;
+    --padding-sm: 0.7rem;
+    --padding-md: 0.8rem;
+    --padding-lg: 1rem;
+    --padding-xl: 1.25rem;
+    --padding-2xl: 1.5rem;
+    --padding-3xl: 1.75rem;
+    --padding-4xl: 2rem;
+    --padding-5xl: 3rem;
+    --padding-6xl: 4rem;
+
+    --gap-3xs: 0.125rem;
+    --gap-2xs: 0.3rem;
+    --gap-xs: 0.5rem;
+    --gap-sm: 0.7rem;
+    --gap-md: 0.9rem;
+    --gap-lg: 1rem;
+    --gap-xl: 1.25rem;
+    --gap-2xl: 2rem;
+    --gap-3xl: 3rem;
+
+    --spacing-scale-sm: 0.6;
+    --spacing-scale-md: 0.7;
+    --spacing-scale-default: 1.0;
+
+    /* Checkout buttons gap */
+    --checkout-button-gap: 10px;
+
+    /* Borders */
+    --style-border-width: 1px;
+    --style-border-radius-xs: 0.2rem;
+    --style-border-radius-sm: 0.6rem;
+    --style-border-radius-md: 0.8rem;
+    --style-border-radius-50: 50%;
+    --style-border-radius-lg: 1rem;
+    --style-border-radius-pills: {{ settings.pills_border_radius }}px;
+    --style-border-radius-inputs: {{ settings.inputs_border_radius }}px;
+    --style-border-radius-buttons-primary: {{ settings.button_border_radius_primary }}px;
+    --style-border-radius-buttons-secondary: {{ settings.button_border_radius_secondary }}px;
+    --style-border-width-primary: {{ settings.primary_button_border_width }}px;
+    --style-border-width-secondary: {{ settings.secondary_button_border_width }}px;
+    --style-border-width-inputs: {{ settings.input_border_width }}px;
+    --style-border-radius-popover: {{ settings.popover_border_radius }}px;
+    --style-border-popover: {{ settings.popover_border_width }}px {{ settings.popover_border }} rgb(var(--color-border-rgb) / {{ settings.popover_border_opacity }}%);
+    --style-border-drawer: {{ settings.drawer_border_width }}px {{ settings.drawer_border }} rgb(var(--color-border-rgb) / {{ settings.drawer_border_opacity }}%);
+    --style-border-swatch-opacity: {{ settings.variant_swatch_border_opacity }}%;
+    --style-border-swatch-width: {{ settings.variant_swatch_border_width }}px;
+    --style-border-swatch-style: {{ settings.variant_swatch_border_style }};
+
+    /* Animation */
+    --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+    --ease-out-quad: cubic-bezier(0.32, 0.72, 0, 1);
+    --animation-speed-fast: 0.0625s;
+    --animation-speed: 0.125s;
+    --animation-speed-slow: 0.2s;
+    --animation-speed-medium: 0.15s;
+    --animation-easing: ease-in-out;
+    --animation-slideshow-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --drawer-animation-speed: 0.2s;
+    --animation-values-slow: var(--animation-speed-slow) var(--animation-easing);
+    --animation-values: var(--animation-speed) var(--animation-easing);
+    --animation-values-fast: var(--animation-speed-fast) var(--animation-easing);
+    --animation-values-allow-discrete: var(--animation-speed) var(--animation-easing) allow-discrete;
+    --animation-timing-hover: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --animation-timing-active: cubic-bezier(0.5, 0, 0.75, 0);
+    --animation-timing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --animation-timing-default: cubic-bezier(0, 0, 0.2, 1);
+    --animation-timing-fade-in: cubic-bezier(0.16, 1, 0.3, 1);
+    --animation-timing-fade-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* View transitions */
+    /* View transition old */
+    --view-transition-old-main-content: var(--animation-speed) var(--animation-easing) both fadeOut;
+
+    /* View transition new */
+    --view-transition-new-main-content: var(--animation-speed) var(--animation-easing) both fadeIn, var(--animation-speed) var(--animation-easing) both slideInTopViewTransition;
+
+    /* Focus */
+    --focus-outline-width: 0.09375rem;
+    --focus-outline-offset: 0.2em;
+
+    /* Badges */
+    --badge-blob-padding-block: 1px;
+    --badge-blob-padding-inline: 12px 8px;
+    --badge-rectangle-padding-block: 1px;
+    --badge-rectangle-padding-inline: 6px;
+    @media screen and (min-width: 750px) {
+      --badge-blob-padding-block: 4px;
+      --badge-blob-padding-inline: 16px 12px;
+      --badge-rectangle-padding-block: 4px;
+      --badge-rectangle-padding-inline: 10px;
+    }
+
+    /* Icons */
+    --icon-size-2xs: 0.6rem;
+    --icon-size-xs: 0.85rem;
+    --icon-size-sm: 1.25rem;
+    --icon-size-md: 1.375rem;
+    --icon-size-lg: 1.5rem;
+    --icon-stroke-width: {% if settings.icon_stroke == 'thin' %}1px{% elsif settings.icon_stroke == 'heavy' %}2px{% else %}1.5px{% endif %};
+
+    /* Input */
+    --input-email-min-width: 200px;
+    --input-search-max-width: 650px;
+    --input-padding-y: 0.8rem;
+    --input-padding-x: 0.8rem;
+    --input-padding: var(--input-padding-y) var(--input-padding-x);
+    --input-box-shadow-width: var(--style-border-width-inputs);
+    --input-box-shadow: 0 0 0 var(--input-box-shadow-width) var(--color-input-border);
+    --input-box-shadow-focus: 0 0 0 calc(var(--input-box-shadow-width) + 0.5px) var(--color-input-border);
+    --input-disabled-background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    --input-disabled-border-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+    --input-disabled-text-color: rgb(var(--color-foreground-rgb) / var(--opacity-50));
+    --input-textarea-min-height: 55px;
+
+    /* Button size */
+    --button-size-sm: 30px;
+    --button-size-md: 36px;
+    --button-size: var(--minimum-touch-target);
+    --button-padding-inline: 24px;
+    --button-padding-block: 16px;
+
+    /* Button font-family */
+    --button-font-family-primary: var(--font-{{ settings.type_font_button_primary }}--family);
+    --button-font-family-secondary: var(--font-{{ settings.type_font_button_secondary }}--family);
+
+    /* Button text case */
+    --button-text-case: {{ settings.button_text_case }};
+    --button-text-case-primary: {{ settings.button_text_case_primary }};
+    --button-text-case-secondary: {{ settings.button_text_case_secondary }};
+
+    /* Borders */
+    --border-color: rgb(var(--color-border-rgb) / var(--opacity-50));
+    --border-width-sm: 1px;
+    --border-width-md: 2px;
+    --border-width-lg: 5px;
+
+    /* Drawers */
+    --drawer-inline-padding: 25px;
+    --drawer-menu-inline-padding: 2.5rem;
+    --drawer-header-block-padding: 20px;
+    --drawer-content-block-padding: 10px;
+    --drawer-header-desktop-top: 0rem;
+    --drawer-padding: calc(var(--padding-sm) + 7px);
+    --drawer-height: 100dvh;
+    --drawer-width: 95vw;
+    --drawer-max-width: 500px;
+
+    /* Variant Picker Swatches */
+    --variant-picker-swatch-width-unitless: {{ settings.variant_swatch_width }};
+    --variant-picker-swatch-height-unitless: {{ settings.variant_swatch_height }};
+    --variant-picker-swatch-width: {{ settings.variant_swatch_width | append: 'px' }};
+    --variant-picker-swatch-height: {{ settings.variant_swatch_height | append: 'px' }};
+    --variant-picker-swatch-radius: {{ settings.variant_swatch_radius | append: 'px' }};
+    --variant-picker-border-width: {{ settings.variant_swatch_border_width | append: 'px' }};
+    --variant-picker-border-style: {{ settings.variant_swatch_border_style }};
+    --variant-picker-border-opacity: {{ settings.variant_swatch_border_opacity | append: '%' }};
+
+    /* Variant Picker Buttons */
+    --variant-picker-button-radius: {{ settings.variant_button_radius | append: 'px' }};
+    --variant-picker-button-border-width: {{ settings.variant_button_border_width | append: 'px' }};
+
+    /* Slideshow */
+    --slideshow-controls-size: 3.5rem;
+    --slideshow-controls-icon: 2rem;
+    --peek-next-slide-size: 3rem;
+
+    /* Utilities */
+    --backdrop-opacity: 0.15;
+    --backdrop-color-rgb: var(--color-shadow-rgb);
+    --minimum-touch-target: 44px;
+    --disabled-opacity: 0.5;
+    --skeleton-opacity: 0.025;
+
+    /* Shapes */
+    --shape--circle: circle(50% at center);
+    --shape--sunburst: polygon(100% 50%,94.62% 55.87%,98.3% 62.94%,91.57% 67.22%,93.3% 75%,85.7% 77.39%,85.36% 85.36%,77.39% 85.7%,75% 93.3%,67.22% 91.57%,62.94% 98.3%,55.87% 94.62%,50% 100%,44.13% 94.62%,37.06% 98.3%,32.78% 91.57%,25% 93.3%,22.61% 85.7%,14.64% 85.36%,14.3% 77.39%,6.7% 75%,8.43% 67.22%,1.7% 62.94%,5.38% 55.87%,0% 50%,5.38% 44.13%,1.7% 37.06%,8.43% 32.78%,6.7% 25%,14.3% 22.61%,14.64% 14.64%,22.61% 14.3%,25% 6.7%,32.78% 8.43%,37.06% 1.7%,44.13% 5.38%,50% 0%,55.87% 5.38%,62.94% 1.7%,67.22% 8.43%,75% 6.7%,77.39% 14.3%,85.36% 14.64%,85.7% 22.61%,93.3% 25%,91.57% 32.78%,98.3% 37.06%,94.62% 44.13%);
+    --shape--diamond: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    --shape--blob: polygon(85.349% 11.712%, 87.382% 13.587%, 89.228% 15.647%, 90.886% 17.862%, 92.359% 20.204%, 93.657% 22.647%, 94.795% 25.169%, 95.786% 27.752%, 96.645% 30.382%, 97.387% 33.048%, 98.025% 35.740%, 98.564% 38.454%, 99.007% 41.186%, 99.358% 43.931%, 99.622% 46.685%, 99.808% 49.446%, 99.926% 52.210%, 99.986% 54.977%, 99.999% 57.744%, 99.975% 60.511%, 99.923% 63.278%, 99.821% 66.043%, 99.671% 68.806%, 99.453% 71.565%, 99.145% 74.314%, 98.724% 77.049%, 98.164% 79.759%, 97.433% 82.427%, 96.495% 85.030%, 95.311% 87.529%, 93.841% 89.872%, 92.062% 91.988%, 89.972% 93.796%, 87.635% 95.273%, 85.135% 96.456%, 82.532% 97.393%, 79.864% 98.127%, 77.156% 98.695%, 74.424% 99.129%, 71.676% 99.452%, 68.918% 99.685%, 66.156% 99.844%, 63.390% 99.942%, 60.624% 99.990%, 57.856% 99.999%, 55.089% 99.978%, 52.323% 99.929%, 49.557% 99.847%, 46.792% 99.723%, 44.031% 99.549%, 41.273% 99.317%, 38.522% 99.017%, 35.781% 98.639%, 33.054% 98.170%, 30.347% 97.599%, 27.667% 96.911%, 25.024% 96.091%, 22.432% 95.123%, 19.907% 93.994%, 17.466% 92.690%, 15.126% 91.216%, 12.902% 89.569%, 10.808% 87.761%, 8.854% 85.803%, 7.053% 83.703%, 5.418% 81.471%, 3.962% 79.119%, 2.702% 76.656%, 1.656% 74.095%, 0.846% 71.450%, 0.294% 68.740%, 0.024% 65.987%, 0.050% 63.221%, 0.343% 60.471%, 0.858% 57.752%, 1.548% 55.073%, 2.370% 52.431%, 3.283% 49.819%, 4.253% 47.227%, 5.249% 44.646%, 6.244% 42.063%, 7.211% 39.471%, 8.124% 36.858%, 8.958% 34.220%, 9.711% 31.558%, 10.409% 28.880%, 11.083% 26.196%, 11.760% 23.513%, 12.474% 20.839%, 13.259% 18.186%, 14.156% 15.569%, 15.214% 13.012%, 16.485% 10.556%, 18.028% 8.261%, 19.883% 6.211%, 22.041% 4.484%, 24.440% 3.110%, 26.998% 2.057%, 29.651% 1.275%, 32.360% 0.714%, 35.101% 0.337%, 37.859% 0.110%, 40.624% 0.009%, 43.391% 0.016%, 46.156% 0.113%, 48.918% 0.289%, 51.674% 0.533%, 54.425% 0.837%, 57.166% 1.215%, 59.898% 1.654%, 62.618% 2.163%, 65.322% 2.750%, 68.006% 3.424%, 70.662% 4.197%, 73.284% 5.081%, 75.860% 6.091%, 78.376% 7.242%, 80.813% 8.551%, 83.148% 10.036%, 85.349% 11.712%);
+
+    /* Buy buttons */
+    --height-buy-buttons: calc(var(--padding-lg) * 2 + var(--icon-size-sm));
+
+    /* Card image width and height variables */
+    --card-width-small: 10rem;
+
+    --height-small: 10rem;
+    --height-medium: 11.5rem;
+    --height-large: 13rem;
+    --height-full: 100vh;
+
+    @media screen and (min-width: 750px) {
+      --height-small: 17.5rem;
+      --height-medium: 21.25rem;
+      --height-large: 25rem;
+    }
+
+    /* Modal */
+    --modal-max-height: 65dvh;
+
+    /* Card styles for search */
+    --card-bg-hover: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+    --card-border-hover: rgb(var(--color-foreground-rgb) / var(--opacity-30));
+    --card-border-focus: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+
+    /* Cart */
+    --cart-primary-font-family: var(--font-body--family);
+    --cart-primary-font-style: var(--font-body--style);
+    --cart-primary-font-weight: var(--font-body--weight);
+    --cart-secondary-font-family: var(--font-{{ settings.cart_price_font }}--family);
+    --cart-secondary-font-style: var(--font-{{ settings.cart_price_font }}--style);
+    --cart-secondary-font-weight: var(--font-{{ settings.cart_price_font }}--weight);
+
+    /* Colors: Definitions */
+    --color--black: #000000;
+    --color--white: #FFFFFF;
+    --color--gray: #808080;
+    --color--gray-light: #D3D3D3;
+    --color--gray-lighter: #E8E8E8;
+    --color--gray-light-warm: #E5DDD5;
+    --color--gray-dark: #505050;
+    --color--gray-darker: #303030;
+    --color--gray-darkest: #1A1A1A;
+    --color--blue: #0066CC;
+    --color--green: #28A745;
+    --color--green-light: #90EE90;
+    --color--green-dark: #006400;
+    --color--red: #DC3545;
+    --color--burgundy: #800020;
+    --color--lavender: #E6E6FA;
+    --color--pink: #FFC0CB;
+    --color--yellow: #FFD700;
+    --color--yellow-vivid: #FFD700;
+    --color--yellow-light: #FFFFE0;
+  }
+
+  :root {
+    /* Fluid Typography Viewport Breakpoints */
+    --vw-start: 390;
+    --vw-end: 1200;
+
+    /* Font Families */
+    /* Reference theme variables from snippets/theme-styles-variables.liquid */
+    --font-family--primary: var(--font-body--family);
+    --font-family--subheading: var(--font-subheading--family);
+    --font-family--heading: var(--font-heading--family);
+    --font-family: var(--font-family--primary);
+
+    /* Font Sizes (in rem, based on Figma pixel values) */
+    --font-size--t1-min: 54;
+    --font-size--t1-max: 82;
+
+    --font-size--t2-min: 54;
+    --font-size--t2-max: 62;
+
+    --font-size--h1-min: 24;
+    --font-size--h1-max: 40;
+
+    --font-size--h2-min: 24;
+    --font-size--h2-max: 32;
+
+    --font-size--h3-min: 24;
+    --font-size--h3-max: 24;
+
+    /* See reviews summary text on PDP ("99 reviews") */
+    --font-size--h4-min: 14;
+    --font-size--h4-max: 24;
+
+    --font-size--h5-min: 14;
+    --font-size--h5-max: 16;
+
+    --font-size--h6-min: 12;
+    --font-size--h6-max: 14;
+
+
+    --font-size--caption-xs: 0.6875rem;
+    /* 11px */
+    --font-size--caption-small: 0.75rem;
+    /* 12px */
+
+    /* Uppercase captions (e.g. Variant picker labels */
+    --font-size--caption-min: 12;
+    --font-size--caption-max: 14;
+
+    --font-size--caption-large: 0.875rem;
+    /* 14px */
+
+    --font-size--caption-xl-min: 14;
+    --font-size--caption-xl-max: 16;
+
+    --font-size--display: 3.8125rem;
+    /* 61px */
+
+    --font-size--price-large: 1.125rem;
+    /* 18px */
+    --font-size--price: 0.875rem;
+    /* 14px */
+
+    --font-size--card-heading-min: 14;
+    --font-size--card-heading-max: 16;
+
+    --font-size--card-body-min: 12;
+    --font-size--card-body-max: 14;
+
+    /* Body XL: 18px */
+    --font-size--body-xl-min: 18;
+    --font-size--body-xl-max: 18;
+
+    /* Body L: 16px */
+    --font-size--body-large-min: 14;
+    --font-size--body-large-max: 16;
+
+    /* Body M: 14px */
+    --font-size--body-min: 14;
+    --font-size--body-max: 14;
+
+    /* Body S: 12px */
+    --font-size--body-small: 0.75rem;
+    /* 12px */
+
+    /* Body XS: 11px */
+    --font-size--body-xs: 0.6875rem;
+    /* 11px */
+
+    --font-size--link: 0.875rem;
+    /* 14px */
+    --font-size--link-small: 0.75rem;
+    /* 12px */
+
+    --font-size--xs: 0.625rem;
+    /* 10px */
+    --font-size--sm: 0.6875rem;
+    /* 11px */
+    --font-size--md: 0.75rem;
+    /* 12px */
+    --font-size--base: 0.8125rem;
+    /* 13px */
+    --font-size--lg: 0.875rem;
+    /* 14px */
+    --font-size--xl: 1rem;
+    /* 16px */
+    --font-size--2xl: 1.125rem;
+    /* 18px */
+    --font-size--3xl: 1.5rem;
+    /* 24px */
+    --font-size--4xl: 2rem;
+    /* 32px */
+    --font-size--5xl: 2.5rem;
+    /* 40px */
+
+    /* Font Weights */
+    --font-weight--light: 300;
+    --font-weight--normal: 400;
+    --font-weight--medium: 500;
+    --font-weight--semibold: 600;
+    --font-weight--bold: 700;
+    --font-weight--extrabold: 800;
+    --font-weight--black: 800;
+
+    /* TODO: Apply these */
+    --font-weight--body: var(--font-weight--normal);
+    --font-weight--heading: var(--font-weight--light);
+    --font-weight: var(--font-weight--body);
+
+    /* TODO: Apply these */
+    --font-weight--body-bold: var(--font-weight--semibold);
+    --font-weight--body-xs-bold: var(--font-weight--bold);
+
+    /* Letter Spacing */
+    --letter-spacing--base: normal;
+    --letter-spacing--spacious: 0.1em;
+    --letter-spacing--loose: 0.01em;
+    --letter-spacing--tight: -0.01em;
+    --letter-spacing: var(--letter-spacing--base);
+    --letter-spacing--caption: var(--letter-spacing--spacious);
+
+    /* Line height */
+    --line-height: 1;
+
+    --line-height--display-tight: 1.1;
+    --line-height--display-normal: 1.2;
+    --line-height--display-loose: 1.3;
+
+    --line-height--heading-tight: 1.15;
+    --line-height--heading-normal: 1.2;
+    --line-height--heading-loose: 1.3;
+
+    --line-height--body-tight: 1.1666666666666667;
+    --line-height--body-normal: 1.4;
+    --line-height--body-loose: 1.6;
+
+
+    /* Typography Presets - Display Text */
+    --font-t1--family: var(--font-family--heading);
+    --font-t1--size: {% render 'fluid-font-size', preset: 't1' %};
+    --font-t1--style: normal;
+    --font-t1--weight: var(--font-weight--heading);
+    --font-t1--letter-spacing: var(--letter-spacing--base);
+    --font-t1--line-height: var(--line-height--display);
+    --font-t1--case: normal;
+    --font-t1--color: var(--color-foreground-heading);
+
+    --font-t2--family: var(--font-family--heading);
+    --font-t2--size: {% render 'fluid-font-size', preset: 't2' %};
+    --font-t2--style: normal;
+    --font-t2--weight: var(--font-weight--heading);
+    --font-t2--letter-spacing: var(--letter-spacing--base);
+    --font-t2--line-height: var(--line-height--display);
+    --font-t2--case: normal;
+    --font-t2--color: var(--color-foreground-heading);
+
+    /* Typography Presets - Headings */
+    --font-h1--family: var(--font-family--heading);
+    --font-h1--size: {% render 'fluid-font-size', preset: 'h1' %};
+    --font-h1--style: normal;
+    --font-h1--weight: var(--font-weight--heading);
+    --font-h1--letter-spacing: var(--letter-spacing--base);
+    --font-h1--line-height: var(--line-height--heading-normal);
+    --font-h1--case: normal;
+    --font-h1--color: var(--color-foreground-heading);
+
+    --font-h2--family: var(--font-family--heading);
+    --font-h2--size: {% render 'fluid-font-size', preset: 'h2' %};
+    --font-h2--style: normal;
+    --font-h2--weight: var(--font-weight--heading);
+    --font-h2--letter-spacing: var(--letter-spacing--base);
+    --font-h2--line-height: var(--line-height--heading-loose);
+    --font-h2--case: normal;
+    --font-h2--color: var(--color-foreground-heading);
+
+    --font-h3--family: var(--font-family--heading);
+    --font-h3--size: {% render 'fluid-font-size', preset: 'h3' %};
+    --font-h3--style: normal;
+    --font-h3--weight: var(--font-weight--heading);
+    --font-h3--letter-spacing: var(--letter-spacing--base);
+    --font-h3--line-height: var(--line-height--heading-normal);
+    --font-h3--case: normal;
+    --font-h3--color: var(--color-foreground-heading);
+
+    --font-h4--family: var(--font-family--subheading);
+    --font-h4--size: {% render 'fluid-font-size', preset: 'h4' %};
+    --font-h4--style: normal;
+    --font-h4--weight: var(--font-weight--normal);
+    --font-h4--letter-spacing: var(--letter-spacing--base);
+    --font-h4--line-height: var(--line-height--heading-normal);
+    --font-h4--case: normal;
+    --font-h4--color: var(--color-foreground-heading);
+
+    /* Body M->L Semibold */
+    --font-h5--family: var(--font-family--subheading);
+    --font-h5--size: {% render 'fluid-font-size', preset: 'h5' %};
+    --font-h5--style: normal;
+    --font-h5--weight: var(--font-weight--subheading);
+    --font-h5--letter-spacing: var(--letter-spacing--base);
+    --font-h5--line-height: var(--line-height--heading-normal);
+    --font-h5--case: normal;
+    --font-h5--color: var(--color-foreground-heading);
+
+    /* Tags S->M */
+    --font-h6--family: var(--font-family--subheading);
+    --font-h6--size: {% render 'fluid-font-size', preset: 'h6' %};
+    --font-h6--style: normal;
+    --font-h6--weight: var(--font-weight--subheading);
+    --font-h6--letter-spacing: var(--letter-spacing--spacious);
+    --font-h6--line-height: var(--line-height--heading-normal);
+    --font-h6--case: uppercase;
+    --font-h6--color: var(--color-foreground-heading);
+
+    /* Typography Presets - Body Text */
+    
+    /* Body XL - 18px */
+    --font-body-xl-semibold--family: var(--font-family--primary);
+    --font-body-xl-semibold--size: {% render 'fluid-font-size', preset: 'body-xl' %};
+    --font-body-xl-semibold--style: normal;
+    --font-body-xl-semibold--weight: var(--font-weight--semibold);
+    --font-body-xl-semibold--letter-spacing: var(--letter-spacing--base);
+    --font-body-xl-semibold--line-height: 1.1666666666666667;
+    --font-body-xl-semibold--case: normal;
+    --font-body-xl-semibold--color: var(--color-foreground);
+
+    /* Body L - 16px */
+    --font-body-large--family: var(--font-family--primary);
+    --font-body-large--size: {% render 'fluid-font-size', preset: 'body-large' %};
+    --font-body-large--style: normal;
+    --font-body-large--weight: var(--font-weight--normal);
+    --font-body-large--letter-spacing: var(--letter-spacing--base);
+    --font-body-large--line-height: 1.4;
+    --font-body-large--case: normal;
+    --font-body-large--color: var(--color-foreground);
+
+    --font-body-large-semibold--family: var(--font-family--primary);
+    --font-body-large-semibold--size: {% render 'fluid-font-size', preset: 'body-large' %};
+    --font-body-large-semibold--style: normal;
+    --font-body-large-semibold--weight: var(--font-weight--semibold);
+    --font-body-large-semibold--letter-spacing: var(--letter-spacing--base);
+    --font-body-large-semibold--line-height: 1.3;
+    --font-body-large-semibold--case: normal;
+    --font-body-large-semibold--color: var(--color-foreground);
+
+    /* Body M - 14px */
+    --font-body-m--family: var(--font-family--primary);
+    --font-body-m--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m--style: normal;
+    --font-body-m--weight: var(--font-weight--normal);
+    --font-body-m--letter-spacing: var(--letter-spacing--base);
+    --font-body-m--line-height: 1.4;
+    --font-body-m--case: normal;
+    --font-body-m--color: var(--color-foreground);
+
+    --font-body-m-baseline-capped--family: var(--font-family--primary);
+    --font-body-m-baseline-capped--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m-baseline-capped--style: normal;
+    --font-body-m-baseline-capped--weight: var(--font-weight--normal);
+    --font-body-m-baseline-capped--letter-spacing: var(--letter-spacing--base);
+    --font-body-m-baseline-capped--line-height: 0.9285714285714286;
+    --font-body-m-baseline-capped--case: normal;
+    --font-body-m-baseline-capped--color: var(--color-foreground);
+
+    --font-body-m-wide--family: var(--font-family--primary);
+    --font-body-m-wide--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m-wide--style: normal;
+    --font-body-m-wide--weight: var(--font-weight--normal);
+    --font-body-m-wide--letter-spacing: var(--letter-spacing--base);
+    --font-body-m-wide--line-height: 1.4;
+    --font-body-m-wide--case: normal;
+    --font-body-m-wide--color: var(--color-foreground);
+
+    --font-body-m-semibold--family: var(--font-family--primary);
+    --font-body-m-semibold--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m-semibold--style: normal;
+    --font-body-m-semibold--weight: var(--font-weight--semibold);
+    --font-body-m-semibold--letter-spacing: var(--letter-spacing--base);
+    --font-body-m-semibold--line-height: 1.3;
+    --font-body-m-semibold--case: normal;
+    --font-body-m-semibold--color: var(--color-foreground);
+
+    --font-body-m-semibold-baseline-capped--family: var(--font-family--primary);
+    --font-body-m-semibold-baseline-capped--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m-semibold-baseline-capped--style: normal;
+    --font-body-m-semibold-baseline-capped--weight: var(--font-weight--semibold);
+    --font-body-m-semibold-baseline-capped--letter-spacing: var(--letter-spacing--base);
+    --font-body-m-semibold-baseline-capped--line-height: 1.0;
+    --font-body-m-semibold-baseline-capped--case: normal;
+    --font-body-m-semibold-baseline-capped--color: var(--color-foreground);
+
+    --font-body-m-semibold-wide--family: var(--font-family--primary);
+    --font-body-m-semibold-wide--size: {% render 'fluid-font-size', preset: 'body-m' %};
+    --font-body-m-semibold-wide--style: normal;
+    --font-body-m-semibold-wide--weight: var(--font-weight--semibold);
+    --font-body-m-semibold-wide--letter-spacing: var(--letter-spacing--base);
+    --font-body-m-semibold-wide--line-height: 1.0;
+    --font-body-m-semibold-wide--case: normal;
+    --font-body-m-semibold-wide--color: var(--color-foreground);
+
+    /* Body S - 12px */
+    --font-body-s--family: var(--font-family--primary);
+    --font-body-s--size: {% render 'fluid-font-size', preset: 'body-s' %};
+    --font-body-s--style: normal;
+    --font-body-s--weight: var(--font-weight--normal);
+    --font-body-s--letter-spacing: var(--letter-spacing--base);
+    --font-body-s--line-height: 1.0;
+    --font-body-s--case: normal;
+    --font-body-s--color: var(--color-foreground);
+
+    --font-body-s-medium--family: var(--font-family--primary);
+    --font-body-s-medium--size: {% render 'fluid-font-size', preset: 'body-s' %};
+    --font-body-s-medium--style: normal;
+    --font-body-s-medium--weight: var(--font-weight--medium);
+    --font-body-s-medium--letter-spacing: var(--letter-spacing--base);
+    --font-body-s-medium--line-height: 1.0;
+    --font-body-s-medium--case: normal;
+    --font-body-s-medium--color: var(--color-foreground);
+
+    --font-body-s-semibold--family: var(--font-family--primary);
+    --font-body-s-semibold--size: {% render 'fluid-font-size', preset: 'body-s' %};
+    --font-body-s-semibold--style: normal;
+    --font-body-s-semibold--weight: var(--font-weight--semibold);
+    --font-body-s-semibold--letter-spacing: var(--letter-spacing--base);
+    --font-body-s-semibold--line-height: 1.0;
+    --font-body-s-semibold--case: normal;
+    --font-body-s-semibold--color: var(--color-foreground);
+
+    /* Body XS - 11px */
+    --font-body-xs--family: var(--font-family--primary);
+    --font-body-xs--size: {% render 'fluid-font-size', preset: 'body-xs' %};
+    --font-body-xs--style: normal;
+    --font-body-xs--weight: var(--font-weight--normal);
+    --font-body-xs--letter-spacing: var(--letter-spacing--base);
+    --font-body-xs--line-height: 1.0;
+    --font-body-xs--case: normal;
+    --font-body-xs--color: var(--color-foreground);
+
+    --font-body-xs-bold--family: var(--font-family--primary);
+    --font-body-xs-bold--size: {% render 'fluid-font-size', preset: 'body-xs' %};
+    --font-body-xs-bold--style: normal;
+    --font-body-xs-bold--weight: var(--font-weight--bold);
+    --font-body-xs-bold--letter-spacing: var(--letter-spacing--base);
+    --font-body-xs-bold--line-height: 1.0;
+    --font-body-xs-bold--case: normal;
+    --font-body-xs-bold--color: var(--color-foreground);
+
+    --font-caption-xl--family: var(--font-family--subheading);
+    --font-caption-xl--size: {% render 'fluid-font-size', preset: 'caption-xl' %};
+    --font-caption-xl--style: normal;
+    --font-caption-xl--weight: var(--font-weight--normal);
+    --font-caption-xl--letter-spacing: var(--letter-spacing--spacious);
+    --font-caption-xl--line-height: var(--line-height--heading-normal);
+    --font-caption-xl--case: normal;
+    --font-caption-xl--color: var(--color-foreground-heading);
+
+    --font-caption-l--family: var(--font-family--subheading);
+    --font-caption-l--size: {% render 'fluid-font-size', preset: 'caption-l' %};
+    --font-caption-l--style: normal;
+    --font-caption-l--weight: var(--font-weight--normal);
+    --font-caption-l--letter-spacing: var(--letter-spacing--spacious);
+    --font-caption-l--line-height: var(--line-height--heading-normal);
+    --font-caption-l--case: normal;
+    --font-caption-l--color: var(--color-foreground-heading);
+
+    --font-caption-m--family: var(--font-family--subheading);
+    --font-caption-m--size: {% render 'fluid-font-size', preset: 'caption-m' %};
+    --font-caption-m--style: normal;
+    --font-caption-m--weight: var(--font-weight--normal);
+    --font-caption-m--letter-spacing: var(--letter-spacing--spacious);
+    --font-caption-m--line-height: var(--line-height--heading-normal);
+    --font-caption-m--case: normal;
+    --font-caption-m--color: var(--color-foreground-heading);
+
+    --font-caption-s--family: var(--font-family--subheading);
+    --font-caption-s--size: {% render 'fluid-font-size', preset: 'caption-s' %};
+    --font-caption-s--style: normal;
+    --font-caption-s--weight: var(--font-weight--normal);
+    --font-caption-s--letter-spacing: var(--letter-spacing--spacious);
+    --font-caption-s--line-height: var(--line-height--heading-normal);
+    --font-caption-s--case: normal;
+    --font-caption-s--color: var(--color-foreground-heading);
+
+    --font-caption-xs--family: var(--font-family--subheading);
+    --font-caption-xs--size: {% render 'fluid-font-size', preset: 'caption-xs' %};
+    --font-caption-xs--style: normal;
+    --font-caption-xs--weight: var(--font-weight--normal);
+    --font-caption-xs--letter-spacing: var(--letter-spacing--spacious);
+    --font-caption-xs--line-height: var(--line-height--heading-normal);
+    --font-caption-xs--case: normal;
+    --font-caption-xs--color: var(--color-foreground-heading);
+  }
+
+  /* Typography Presets */
+  {%- assign typography_presets = 't1, t2, h1, h2, h3, h4, h5, h6, caption-xl, caption-l, caption-m, caption-s, caption-xs, body-xl-semibold, body-large, body-large-semibold, body-m, body-m-baseline-capped, body-m-wide, body-m-semibold, body-m-semibold-baseline-capped, body-m-semibold-wide, body-s, body-s-medium, body-s-semibold, body-xs, body-xs-bold' | split: ', ' -%}
+  {%- for preset in typography_presets -%}
+    {%- comment -%} Determine if this is a heading (h1-h6) or display text (t1-t2) {%- endcomment -%}
+    {%- assign is_heading = false -%}
+    {%- if preset contains 'h' -%}
+      {%- assign is_heading = true -%}
+    {%- endif -%}
+
+    {%- comment -%} Build the selector based on preset type {%- endcomment -%}
+    {%- if is_heading -%}
+  {{ preset }},
+  .{{ preset }}.{{ preset }},
+  .text-block.{{ preset }} > * {
+    {%- else -%}
+  .{{ preset }}.{{ preset }},
+  .text-block.{{ preset }} > * {
+    {%- endif -%}
+    font-family: var(--font-{{ preset }}--family);
+    font-size: var(--font-{{ preset }}--size);
+    font-style: var(--font-{{ preset }}--style);
+    font-weight: var(--font-{{ preset }}--weight);
+    letter-spacing: var(--font-{{ preset }}--letter-spacing);
+    line-height: var(--font-{{ preset }}--line-height);
+    text-transform: var(--font-{{ preset }}--case);
+    color: var(--font-{{ preset }}--color);
+  }
+
+  {%- endfor -%}
+{% endstyle %}

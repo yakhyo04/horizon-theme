@@ -1,0 +1,516 @@
+<link rel="stylesheet" href="{{ 'ugc-gallery.css' | asset_url }}">
+
+{% liquid
+  assign max_items = section.settings.max_items
+  assign app_key = section.settings.yotpo_app_key
+  assign domain_key = section.settings.yotpo_domain_key
+  assign gallery_id = section.settings.yotpo_gallery_id
+  assign rows = section.settings.rows | default: 2
+  assign columns = section.settings.columns
+%}
+
+<script src="{{ 'dialog.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'ugc-component.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'ugc-gallery.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<script src="{{ 'ugc-modal.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<div
+  class="
+    ugc-gallery section
+    section--{{ section.settings.section_width }}
+    color-{{ section.settings.color_scheme }}
+    section-resource-list
+    spacing-style
+  "
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  {% if section.settings.heading != blank %}
+    <div class="section-resource-list__header">
+      {%- content_for 'block', type: 'heading', id: 'static-heading', text: section.settings.heading -%}
+    </div>
+  {% endif %}
+
+  <ugc-gallery-component
+    app-key="{{ app_key }}"
+    domain-key="{{ domain_key }}"
+    gallery-id="{{ gallery_id }}"
+    max-items="{{ max_items }}"
+    columns="{{ columns }}"
+    rows="{{ rows }}"
+    layout-type="{{ section.settings.layout_type }}"
+    section-width="{{ section.settings.section_width }}"
+    display-scrollbar="{{ section.settings.display_scrollbar }}"
+    class="
+      ugc-gallery__component
+      {% if section.settings.layout_type == 'carousel' %}
+        force-full-width
+      {% endif %}
+    "
+  >
+    {% liquid
+      case section.settings.layout_type
+        when 'grid'
+          assign resource_list_classes = 'resource-list--grid'
+        when 'carousel'
+          assign resource_list_classes = 'resource-list__carousel-wrapper'
+      endcase
+    %}
+
+    <div
+      ref="container"
+      class="
+        resource-list
+        ugc-gallery__container
+        {{ resource_list_classes }}
+      "
+      style="
+        --resource-list-column-gap-desktop: {{ section.settings.columns_gap }}px;
+        --resource-list-row-gap-desktop: {{ section.settings.rows_gap }}px;
+        --resource-list-columns: repeat({{ section.settings.columns }}, 1fr);
+        --resource-list-columns-mobile: repeat({{ section.settings.mobile_columns }}, 1fr);
+        --column-count: {{ columns }};
+        --column-count-mobile: {{ section.settings.mobile_columns }};
+        --slide-width-max: 300px;
+        --ugc-image-ratio: {% render 'ratio', image_ratio: section.settings.image_ratio %};
+      "
+      aria-label="{{ 'accessibility.ugc_gallery' | t | default: 'User generated content gallery' }}"
+    >
+      {% comment %} Skeleton loading states {% endcomment %}
+      {% if section.settings.layout_type == 'carousel' %}
+        <div
+          class="resource-list__carousel"
+          style="{% if section.settings.section_width == 'page-width' %}--gutter-slide-width: var(--util-page-margin-offset);{% else %}--gutter-slide-width: 0px;{% endif %}"
+        >
+          <div class="ugc-gallery__carousel-skeleton">
+            {% for i in (1..columns) %}
+              <div class="ugc-card ugc-card--skeleton resource-list__slide">
+                <div class="ugc-card__image-skeleton"></div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        {% for i in (1..max_items) %}
+          <div class="ugc-card ugc-card--skeleton resource-list__item">
+            <div class="ugc-card__image-skeleton"></div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </ugc-gallery-component>
+
+  <dialog-component id="ugc-modal">
+    <dialog
+      ref="dialog"
+      class="ugc-modal dialog-modal"
+      aria-labelledby="ugc-modal-title"
+    >
+      <button
+        type="button"
+        class="ugc-modal__close button button-unstyled"
+        aria-label="{{ 'accessibility.close' | t }}"
+        on:click="/closeDialog"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+        </svg>
+      </button>
+
+      <div class="ugc-modal__content">
+        <h2 id="ugc-modal-title" class="sr-only">
+          {{ 'accessibility.ugc_modal' | t | default: 'User generated content' }}
+        </h2>
+        <ugc-modal-component
+          ref="ugcModal"
+          app-key="{{ app_key }}"
+          domain-key="{{ domain_key }}"
+          gallery-id="{{ gallery_id }}"
+        >
+          <div ref="slideshowContainer" class="ugc-modal__slideshow-container">
+            {% comment %} Slideshow rendered dynamically by JS after slides are available {% endcomment %}
+          </div>
+        </ugc-modal-component>
+      </div>
+    </dialog>
+  </dialog-component>
+</div>
+
+{% comment %} Templates for JS rendering {% endcomment %}
+<template id="ugc-modal-slideshow-template">
+  {% render 'slideshow',
+    ref: 'ugcModalSlideshow',
+    class: 'ugc-modal__slideshow',
+    initial_slide: 0,
+    slides: '',
+    show_arrows: true,
+    auto_hide_controls: true,
+    arrows_class: 'ugc-modal__arrows'
+  %}
+</template>
+
+<template id="ugc-card-template">
+  <button
+    type="button"
+    class="ugc-card resource-list__item"
+    data-post-id=""
+    data-post-index=""
+    aria-haspopup="dialog"
+    aria-label=""
+  >
+    <article class="ugc-card__content">
+      <div class="ugc-card__media">
+        {% # theme-check-disable ImgWidthAndHeight %}
+        {% # theme-check-disable RemoteAsset %}
+        <img
+          class="ugc-card__image"
+          src=""
+          data-src-hd=""
+          alt=""
+          loading="lazy"
+        >
+        {% # theme-check-enable ImgWidthAndHeight %}
+        {% # theme-check-enable RemoteAsset %}
+        <div class="ugc-card__overlay">
+          <div class="ugc-card__source-badge"></div>
+        </div>
+      </div>
+    </article>
+  </button>
+</template>
+
+<template id="ugc-card-video-template">
+  <button
+    type="button"
+    class="ugc-card resource-list__item"
+    data-post-id=""
+    data-post-index=""
+    aria-haspopup="dialog"
+    aria-label=""
+  >
+    <article class="ugc-card__content">
+      <div class="ugc-card__media" style="--ugc-image-ratio: {% render 'ratio', image_ratio: section.settings.image_ratio %}">
+        <div class="ugc-card__video-wrapper">
+          {% # theme-check-disable ImgWidthAndHeight %}
+          {% # theme-check-disable RemoteAsset %}
+          <img
+            class="ugc-card__image"
+            src=""
+            alt=""
+            loading="lazy"
+          >
+          {% # theme-check-enable ImgWidthAndHeight %}
+          {% # theme-check-enable RemoteAsset %}
+          <div class="ugc-card__video-indicator" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+              <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="ugc-card__overlay">
+          <div class="ugc-card__source-badge"></div>
+        </div>
+      </div>
+    </article>
+  </button>
+</template>
+
+<template id="ugc-modal-slide-template">
+  <slideshow-slide
+    ref="slides[]"
+    class="ugc-modal__slide"
+    aria-hidden="true"
+    style=""
+    slide-id=""
+  >
+    <div class="ugc-modal__card">
+      <div class="ugc-modal__media" style="--ugc-image-ratio: {% render 'ratio', image_ratio: section.settings.image_ratio %}">
+        {% # theme-check-disable ImgWidthAndHeight %}
+        {% # theme-check-disable RemoteAsset %}
+        <img
+          class="ugc-modal__image"
+          src=""
+          alt=""
+        >
+        {% # theme-check-enable ImgWidthAndHeight %}
+        {% # theme-check-enable RemoteAsset %}
+      </div>
+      <div class="ugc-modal__details">
+        <header class="ugc-modal__header">
+          <div class="ugc-modal__avatar">
+            <span class="ugc-modal__avatar-letter"></span>
+          </div>
+          <div class="ugc-modal__user-info">
+            <span class="ugc-modal__username"></span>
+            <span class="ugc-modal__date"></span>
+          </div>
+          <div class="ugc-modal__source"></div>
+        </header>
+        <div class="ugc-modal__products"></div>
+        <div class="ugc-modal__caption"></div>
+        <footer class="ugc-modal__footer">
+          <div class="ugc-modal__engagement">
+            <div class="ugc-modal__vote ugc-modal__vote--up">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M14,20H10V11L6.5,14.5L4.08,12.08L12,4.16L19.92,12.08L17.5,14.5L14,11V20Z"/>
+              </svg>
+              <span></span>
+            </div>
+            <div class="ugc-modal__vote ugc-modal__vote--down">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path fill="currentColor" d="M10,4H14V13L17.5,9.5L19.92,11.92L12,19.84L4.08,11.92L6.5,9.5L10,13V4Z"/>
+              </svg>
+              <span></span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </slideshow-slide>
+</template>
+
+{% schema %}
+{
+  "name": "t:names.ugc_gallery",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Shop Our Community"
+    },
+    {
+      "type": "header",
+      "content": "Yotpo Integration"
+    },
+    {
+      "type": "text",
+      "id": "yotpo_app_key",
+      "label": "Yotpo App Key",
+      "info": "Your Yotpo application key (e.g., wJOQxbjFfDCn9kF3huyrvxW78fTjT3z2sM2xVys6)"
+    },
+    {
+      "type": "text",
+      "id": "yotpo_gallery_id",
+      "label": "Yotpo Gallery ID",
+      "info": "Your Yotpo gallery ID (e.g., 63f7ec269e1d3c1ba125239b)"
+    },
+    {
+      "type": "text",
+      "id": "yotpo_domain_key",
+      "label": "Yotpo Domain Key",
+      "info": "Your Yotpo domain key (e.g., yotpononproductrelatedwidget)"
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "t:settings.max_items",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2,
+      "info": "Number of rows to request from Yotpo API"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.layout_type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "carousel",
+          "label": "t:options.carousel"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ section.settings.layout_type != 'editorial' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "2",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "1",
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_scrollbar",
+      "label": "t:settings.display_scrollbar",
+      "default": false,
+      "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "rows_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.image_ratio"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "t:options.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.landscape"
+        },
+        {
+          "value": "16_9",
+          "label": "16:9"
+        },
+        {
+          "value": "4_3",
+          "label": "4:3"
+        },
+        {
+          "value": "3_2",
+          "label": "3:2"
+        },
+        {
+          "value": "2_3",
+          "label": "2:3"
+        },
+        {
+          "value": "9_16",
+          "label": "9:16"
+        }
+      ],
+      "default": "square",
+      "label": "t:settings.aspect_ratio"
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.ugc_gallery",
+      "category": "t:categories.social",
+      "settings": {
+        "heading": "Shop Our Community",
+        "max_items": 12,
+        "rows": 2,
+        "image_ratio": "square",
+        "layout_type": "grid",
+        "columns": 3,
+        "mobile_columns": "1",
+        "display_scrollbar": false,
+        "columns_gap": 24,
+        "rows_gap": 24,
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,51 @@
+{%- comment -%}
+  Outputs @font-face declaration.
+
+  Accepts:
+  - family: {String} Font family. Must match both `font-family` name and file name.
+  - weight: {String} Font weight. Default: 'normal' (optional)
+  - style:  {String} Font style. Default: 'normal' (optional)
+  - display: {String} Font display type. Default: 'swap' (optional)
+  - allow_filename_spaces: {Boolean} Allow spaces in font name. Default: false (optional)
+
+  Usage:
+  {% render 'font-face', family: 'Gazpacho', weight: 'bold', style: 'italic' %}
+  {% render 'font-face' with 'Gazpacho', weight: 'bold' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign weight_map = 'normal:regular|100:thin|200:extralight|300:light|400:regular|500:medium|600:semibold|700:bold|800:extrabold|900:black|heavy:black' | split: '|'
+
+  assign family = family | default: font-face
+  assign weight = weight | default: 'regular'
+  assign style = style | default: 'normal'
+  assign display = display | default: 'swap'
+
+  unless style == 'normal'
+    assign suffix = style | prepend: '-'
+  endunless
+
+  for mapping in weight_map
+    assign parts = mapping | split: ':'
+    if parts.first == weight
+      assign weight = parts.last
+    endif
+    if parts.last == weight
+      assign weight_value = parts.first
+    endif
+  endfor
+
+  assign filename_family = family | remove: "'"
+  unless allow_filename_spaces
+    assign filename_family = filename_family | remove: ' '
+  endunless
+-%}
+{%- capture src -%}{{ filename_family }}-{{ weight }}{{ suffix }}{%- endcapture -%}
+
+@font-face {
+  font-family: "{{ family }}";
+  src: url("{{ src | append: '.woff2' | asset_url }}") format("woff2");
+  font-weight: {{ weight_value | default: weight }};
+  font-style: {{ style }};
+  font-display: {{ display }};
+}

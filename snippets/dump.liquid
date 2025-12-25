@@ -1,0 +1,55 @@
+{%- comment -%}
+  Logs a variable to the console
+
+  Accepts:
+  - value: {String} Value to log to the console.
+  - label: {String} Label to prepend to logged output. (optional)
+  - group: {String} Group name for use in generating log label if unset. (optional)
+  - key: {String} Variable key for use in generating log label if unset. (optional)
+  - filename: {String} Associated file name for use in generating log label if unset. (optional)
+  - snippet: {String} Snippet name for use in generating filename if unset. (optional)
+  - section: {String} Section name for use in generating filename if unset. (optional)
+  - line: {String} Line number for use in generating filename if unset. (optional)
+
+  Usage:
+  {%- render 'dump', label: 'label', value: value, key: key -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign value = value | default: dump
+  assign group = group | default: 'variable' | upcase
+  if filename == blank and snippet != blank or section != blank and section.size > 0
+    if snippet != blank
+      assign filename = snippet | prepend: 'snippets/'
+    endif
+
+    if section != blank
+      assign filename = section | prepend: 'sections/'
+    endif
+  endif
+
+  if label == blank and key != blank
+    assign label = key
+  endif
+
+  if filename != blank
+    unless filename contains '.liquid'
+      assign filename = filename | strip | append: '.liquid'
+    endunless
+
+    # if label == blank
+    #   assign label = label | append: 'variable'
+    # endif
+
+    if line != blank
+      assign filename = filename | append: ':' | append: line
+    endif
+
+    assign label = label | append: ' (' | append: filename | append: ')'
+  endif
+
+  if label != blank
+    assign label = label | append: ':'
+  endif
+-%}
+<script type="text/javascript">console.log('[{{ group }}]{% if label != blank %} {{ label | strip }}{% endif %}', {{ value | json }});</script>

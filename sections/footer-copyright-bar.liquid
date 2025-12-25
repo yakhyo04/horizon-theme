@@ -1,0 +1,262 @@
+{{ 'section-footer-copyright-bar.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+	assign spacing_type = section.settings.spacing_type | default: 'padding'
+	assign desktop_spacing_top = section.settings.desktop_spacing_top | default: 8
+	assign desktop_spacing_bottom = section.settings.desktop_spacing_bottom | default: 8
+	assign mobile_spacing_top = section.settings.mobile_spacing_top | default: 8
+	assign mobile_spacing_bottom = section.settings.mobile_spacing_bottom | default: 8
+
+	assign current_year = 'now' | date: '%Y'
+	assign default_left_text = '© ' | append: current_year | append: ' ' | append: shop.name
+	assign left_text = section.settings.left_text | default: default_left_text
+	assign aria_label = section.settings.aria_label | default: 'Site copyright and region information'
+
+	assign right_text = section.settings.right_text | default: 'UNITED STATES (USD$)'
+
+	assign show_language = section.settings.show_language
+	if localization.available_languages.size <= 1
+		assign show_language = false
+	endif
+
+	assign show_country = section.settings.show_country
+	if localization.available_countries.size <= 1
+		assign show_country = false
+	endif
+
+	if show_country or show_language
+		capture localization_markup
+			render 'dropdown-localization', show_country: show_country, show_language: show_language, country_style: section.settings.country_selector_style, localization_position: section.settings.localization_position
+		endcapture
+	endif
+%}
+
+<section
+	class="section section--full-width footer-copyright-bar footer-copyright-bar--{{ spacing_type }} color-{{ section.settings.color_scheme }}"
+	role="contentinfo"
+	aria-label="{{ aria_label }}"
+	style="
+		--footer-copyright-desktop-top: {{ desktop_spacing_top }}px;
+		--footer-copyright-desktop-bottom: {{ desktop_spacing_bottom }}px;
+		--footer-copyright-mobile-top: {{ mobile_spacing_top }}px;
+		--footer-copyright-mobile-bottom: {{ mobile_spacing_bottom }}px;
+	"
+>
+	<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+	<div class="footer-copyright-bar__inner">
+		<p class="footer-copyright-bar__left" id="FooterCopyrightText-{{ section.id }}">
+			{{ left_text }}
+		</p>
+
+		<div class="footer-copyright-bar__right">
+			{% if localization_markup %}
+				<div class="footer-copyright-bar__localization">
+					{{ localization_markup }}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Footer copyright bar",
+	"tag": "section",
+	"class": "footer-copyright-bar-wrapper",
+	"enabled_on": {
+		"groups": ["footer"]
+	},
+	"settings": [
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"label": "Color scheme",
+			"default": "scheme-1"
+		},
+		{
+			"type": "text",
+			"id": "left_text",
+			"label": "Left text",
+			"info": "Defaults to © current year and shop name when left blank."
+		},
+		{
+			"type": "text",
+			"id": "right_text",
+			"label": "Right text",
+			"default": "UNITED STATES (USD$)"
+		},
+		{
+			"type": "text",
+			"id": "aria_label",
+			"label": "Accessible label for section",
+			"default": "Site copyright and region information"
+		},
+		{
+			"type": "header",
+			"content": "Localization"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_country",
+			"label": "Show country selector",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "country_selector_style",
+			"label": "Show country flag icon",
+			"default": true,
+			"visible_if": "{{ section.settings.show_country }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_language",
+			"label": "Show language selector",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "localization_font",
+			"label": "Localization font",
+			"options": [
+				{
+					"value": "heading",
+					"label": "Heading"
+				},
+				{
+					"value": "subheading",
+					"label": "Subheading"
+				},
+				{
+					"value": "body",
+					"label": "Body"
+				},
+				{
+					"value": "accent",
+					"label": "Accent"
+				}
+			],
+			"default": "heading",
+			"visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+		},
+		{
+			"type": "select",
+			"id": "localization_font_size",
+			"label": "Localization font size",
+			"options": [
+				{
+					"value": "0.625rem",
+					"label": "10px"
+				},
+				{
+					"value": "0.75rem",
+					"label": "12px"
+				},
+				{
+					"value": "0.875rem",
+					"label": "14px"
+				},
+				{
+					"value": "1rem",
+					"label": "16px"
+				},
+				{
+					"value": "1.125rem",
+					"label": "18px"
+				}
+			],
+			"default": "0.75rem",
+			"visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+		},
+		{
+			"type": "select",
+			"id": "localization_position",
+			"label": "Localization alignment",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"default": "right",
+			"visible_if": "{{ section.settings.show_country or section.settings.show_language }}"
+		},
+		{
+			"type": "select",
+			"id": "spacing_type",
+			"label": "Spacing type",
+			"options": [
+				{
+					"value": "padding",
+					"label": "Padding"
+				},
+				{
+					"value": "margin",
+					"label": "Margin"
+				}
+			],
+			"default": "padding"
+		},
+		{
+			"type": "header",
+			"content": "Desktop spacing"
+		},
+		{
+			"type": "range",
+			"id": "desktop_spacing_top",
+			"label": "Top (desktop)",
+			"min": 0,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "desktop_spacing_bottom",
+			"label": "Bottom (desktop)",
+			"min": 0,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "header",
+			"content": "Mobile spacing"
+		},
+		{
+			"type": "range",
+			"id": "mobile_spacing_top",
+			"label": "Top (mobile)",
+			"min": 0,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "mobile_spacing_bottom",
+			"label": "Bottom (mobile)",
+			"min": 0,
+			"max": 100,
+			"step": 2,
+			"unit": "px",
+			"default": 8
+		}
+	],
+	"presets": [
+		{
+			"name": "Footer copyright bar",
+			"category": "Footer"
+		}
+	]
+}
+{% endschema %}
+

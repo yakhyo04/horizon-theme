@@ -1,0 +1,356 @@
+{%- capture list_content -%}
+  {%- content_for 'blocks' -%}
+{%- endcapture -%}
+
+{%- liquid
+  assign icon_color = block.settings.icon_color
+
+  if block.settings.use_custom_icon_color
+    assign icon_color = block.settings.icon_color_custom
+  endif
+-%}
+
+{%- render 'list',
+  block: block,
+  children: list_content,
+  icon_color: icon_color
+-%}
+
+{% schema %}
+{
+  "name": "t:names.list",
+  "tag": null,
+  "class": "list",
+  "blocks": [
+    {
+      "type": "_list-item"
+    }
+  ],
+  "settings": [
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.show_gap != false }}"
+    },
+    {
+      "type": "range",
+      "id": "inner_gap",
+      "label": "t:settings.inner_gap",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.show_gap != false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gap",
+      "label": "t:settings.show_gap",
+      "default": true,
+      "visible_if": "{{ false }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_case",
+      "label": "t:settings.heading_case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "t:settings.inherit_color_scheme",
+      "default": true,
+      "visible_if": "{{ block.settings.show_color_scheme != false }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.show_color_scheme != false and block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_scheme",
+      "label": "t:settings.show_color_scheme",
+      "default": false,
+      "visible_if": "{{ false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_list_item_icons",
+      "label": "t:settings.display_list_item_icons",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_color",
+      "label": "t:settings.icon_color",
+      "options": [
+        {
+          "value": "#92c1e9",
+          "label": "t:colors.blue"
+        },
+        {
+          "value": "#52a9d7",
+          "label": "t:colors.dark_blue"
+        },
+        {
+          "value": "#afdc4d",
+          "label": "t:colors.green"
+        },
+        {
+          "value": "#ff9c53",
+          "label": "t:colors.orange"
+        },
+        {
+          "value": "#feb1bb",
+          "label": "t:colors.pink"
+        },
+        {
+          "value": "#c2b1ce",
+          "label": "t:colors.purple"
+        },
+        {
+          "value": "#64d2c6",
+          "label": "t:colors.turquoise"
+        },
+        {
+          "value": "#ffc32c",
+          "label": "t:colors.yellow"
+        }
+      ],
+      "default": "#92c1e9",
+      "visible_if": "{{ block.settings.display_list_item_icons != false and block.settings.use_custom_icon_color == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_icon_color",
+      "label": "t:settings.use_custom_icon_color",
+      "default": false,
+      "visible_if": "{{ block.settings.display_list_item_icons != false }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_color_custom",
+      "label": "t:settings.icon_color_custom",
+      "default": "#92c1e9",
+      "visible_if": "{{ block.settings.display_list_item_icons != false and block.settings.use_custom_icon_color == true }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.borders",
+      "visible_if": "{{ block.settings.show_borders != false }}"
+    },
+    {
+      "type": "select",
+      "id": "border",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.show_borders != false }}"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.thickness",
+      "default": 1,
+      "visible_if": "{{ block.settings.border != \"none\" }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "t:settings.opacity",
+      "default": 100,
+      "visible_if": "{{ block.settings.border != \"none\" }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 0,
+      "visible_if": "{{ block.settings.show_borders != false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_borders",
+      "label": "t:settings.show_borders",
+      "default": false,
+      "visible_if": "{{ false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding",
+      "visible_if": "{{ block.settings.show_padding != false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_padding != false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_padding != false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_padding != false }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_padding != false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_padding",
+      "label": "t:settings.show_padding",
+      "default": false,
+      "visible_if": "{{ false }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.list",
+      "category": "t:categories.layout",
+      "blocks": {
+        "item-1": {
+          "type": "_list-item",
+          "settings": {
+            "heading": "t:text_defaults.list_item_heading"
+          },
+          "blocks": {
+            "text-1": {
+              "type": "heading",
+              "settings": {
+                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget ornare enim, et elementum metus. Aenean congue, turpis eu viverra malesuada, felis arcu efficitur.</p>",
+                "width": "fit-content",
+                "max_width": "wide",
+              }
+            }
+          },
+          "block_order": ["text-1"]
+        },
+        "item-2": {
+          "type": "_list-item",
+          "settings": {
+            "heading": "t:text_defaults.list_item_heading"
+          },
+          "blocks": {
+            "text-1": {
+              "type": "heading",
+              "settings": {
+                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget ornare enim, et elementum metus. Aenean congue, turpis eu viverra malesuada, felis arcu efficitur.</p>",
+                "width": "100%",
+              }
+            }
+          },
+          "block_order": ["text-1"]
+        },
+        "item-3": {
+          "type": "_list-item",
+          "settings": {
+            "heading": "t:text_defaults.list_item_heading"
+          },
+          "blocks": {
+            "text-1": {
+              "type": "heading",
+              "settings": {
+                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget ornare enim, et elementum metus. Aenean congue, turpis eu viverra malesuada, felis arcu efficitur.</p>",
+                "width": "fit-content",
+                "max_width": "wide",
+              }
+            }
+          },
+          "block_order": ["text-1"]
+        },
+        "item-4": {
+          "type": "_list-item",
+          "settings": {
+            "heading": "t:text_defaults.list_item_heading"
+          },
+          "blocks": {
+            "text-1": {
+              "type": "heading",
+              "settings": {
+                "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget ornare enim, et elementum metus. Aenean congue, turpis eu viverra malesuada, felis arcu efficitur.</p>",
+                "width": "fit-content",
+                "max_width": "wide",
+              }
+            }
+          },
+          "block_order": ["text-1"]
+        }
+      },
+      "block_order": ["item-1", "item-2", "item-3", "item-4"]
+    }
+  ]
+}
+{% endschema %}

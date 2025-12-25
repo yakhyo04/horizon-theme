@@ -1,0 +1,246 @@
+{% liquid
+  assign max_items = section.settings.max_products
+%}
+
+<div
+  class="
+    testimonials section
+    section--{{ section.settings.section_width }}
+    color-{{ section.settings.color_scheme }}
+    section-resource-list
+    spacing-style
+  "
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="section-resource-list__header">
+    {%- content_for 'block', type: 'heading', id: 'static-heading', text: section.settings.heading -%}
+  </div>
+
+  {% capture list_items %}
+    {% for testimonial in shop.metaobjects.testimonial.values limit: max_items %}
+      <div
+        class="resource-list__item"
+      >
+        {% # theme-check-disable UniqueStaticBlockId %}
+          {% content_for 'block', type: '_testimonial-card', id: 'static-testimonial-card', closest.metaobject.testimonial: testimonial, testimonial: testimonial %}
+        {% # theme-check-enable UniqueStaticBlockId %}
+      </div>
+      {% unless forloop.last %}
+        <!--@list/split-->
+      {% endunless %}
+    {% endfor %}
+  {% endcapture %}
+
+  {% liquid
+    # Create an array from the list items to be used for different layout types
+    assign list_items_array = list_items | strip | split: '<!--@list/split-->'
+  %}
+
+  {% render 'resource-list',
+    list_items: list_items,
+    list_items_array: list_items_array,
+    settings: section.settings,
+    slide_count: max_items,
+    content_type: 'products',
+    test_id: 'resource-list-grid'
+  %}
+</div>
+
+{% stylesheet %}
+  .testimonial-card__author div {
+    color: rgba(35, 35, 35, 0.5) !important;
+  }
+
+  .testimonial-card__rating {
+    display: flex;
+    gap: 2px;
+  }
+
+  .testimonial-card__rating,
+  .testimonial-card__description,
+  .testimonial-card__author {
+    padding-inline: var(--padding-md);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.testimonials",
+  "settings": [
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:settings.testimonial_count",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.layout_type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "carousel",
+          "label": "t:options.carousel"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ section.settings.layout_type != 'editorial' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "t:settings.mobile_columns",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:options.one_number"
+        },
+        {
+          "value": "2",
+          "label": "t:options.two_number"
+        }
+      ],
+      "default": "1",
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_scrollbar",
+      "label": "t:settings.display_scrollbar",
+      "default": false,
+      "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "rows_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.testimonials",
+      "category": "t:categories.other_sections",
+      "settings": {
+        "max_products": 6,
+        "layout_type": "grid",
+        "columns": 3,
+        "mobile_columns": "1",
+        "columns_gap": 32,
+        "rows_gap": 32,
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      },
+      "blocks": {
+        "static-testimonial-card": {
+          "type": "_testimonial-card",
+          "name": "t:names.testimonial_card",
+          "static": true,
+          "blocks": {
+            "testimonial-image": {
+              "type": "_testimonial-image",
+              "name": "t:names.testimonial_image"
+            },
+            "testimonial-rating": {
+              "type": "_testimonial-rating",
+              "name": "t:names.testimonial_rating"
+            },
+            "testimonial-description": {
+              "type": "_testimonial-description",
+              "name": "t:names.testimonial_description"
+            },
+            "testimonial-author": {
+              "type": "_testimonial-author",
+              "name": "t:names.testimonial_author"
+            }
+          },
+          "block_order": ["testimonial-image", "testimonial-rating", "testimonial-description", "testimonial-author"]
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

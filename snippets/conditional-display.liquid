@@ -1,0 +1,129 @@
+{%- doc -%}
+  Conditionally renders content based on the provided criteria
+
+  @param {string} content - The content to render
+  @param {object} entity - The block or section object
+{%- enddoc -%}
+
+{% comment %} TODO: Abstract this by providing criteria metadata via hidden fields following consistent naming conventions (e.g. conditional_display_[value], conditional_display_[value]_source) {% endcomment %}
+
+{% comment %}
+  conditional_display_[value]_enabled
+  conditional_display_[value]
+  conditional_display_[value]_display_type
+  conditional_display_[value]_operator
+  conditional_display_[value]_invert_operator
+
+  region
+  date
+  product_inventory
+  product_property
+{% endcomment %}
+
+{%- liquid
+  assign entity_settings = entity.settings
+  assign content = content | default: conditional-display
+
+  assign render = true
+
+  if render and entity_settings.condition_region_enabled and entity_settings.condition_region != blank
+    assign current_country = localization.country
+
+    assign countries = entity_settings.condition_region | strip | replace: ', ', ',' | split: ','
+
+    assign criteria_match = false
+    assign invert_match = false
+    if entity_settings.condition_region_display_type == 'hide'
+      assign invert_match = true
+    endif
+    if countries contains current_country.name or countries contains current_country.iso_code
+      unless invert_match
+        assign criteria_match = true
+      endunless
+    else
+      if invert_match
+        assign criteria_match = true
+      endif
+    endif
+
+    unless criteria_match
+      assign render = false
+    endunless
+  endif
+
+  # TODO: Date
+
+  if render and entity_settings.condition_product_inventory_enabled
+    assign product_in_stock = closest.product.available
+
+    if entity_settings.condition_product_inventory == 'in_stock' and product_in_stock != true
+      assign render = false
+    elsif entity_settings.condition_product_inventory == 'out_of_stock' and product_in_stock
+      assign render = false
+    endif
+  endif
+
+  if render and entity_settings.condition_product_property_enabled and entity_settings.condition_product_property != blank and entity_settings.condition_product_property_value != blank
+    assign product_property = entity_settings.condition_product_property | handleize | replace: '-', '_'
+    assign product_property_current_value = closest.product[product_property]
+    assign product_property_target_value = entity_settings.condition_product_property_value
+    assign product_property_operator = entity_settings.condition_product_property_operator
+
+    if product_property contains 'price'
+      assign product_property_target_value = product_property_target_value | remove: '$'
+      if product_property_target_value contains '.'
+        assign product_property_target_value = product_property_target_value | remove: '.' | plus: 0
+      else
+        assign product_property_target_value = product_property_target_value | times: 100
+      endif
+    elsif entity_settings.condition_product_property_case_insensitive
+      assign product_property_current_value = product_property_current_value | downcase
+      assign product_property_target_value = product_property_target_value | downcase
+    endif
+
+    assign criteria_match = false
+    assign invert_match = entity_settings.condition_product_property_invert_operator
+
+    case product_property_operator
+      when '='
+        if product_property_current_value == product_property_target_value
+          assign criteria_match = true
+        endif
+      when '>'
+        if product_property_current_value > product_property_target_value
+          assign criteria_match = true
+        endif
+      when '>='
+        if product_property_current_value >= product_property_target_value
+          assign criteria_match = true
+        endif
+      when 'contains'
+        if product_property_current_value contains product_property_target_value
+          assign criteria_match = true
+        endif
+    endcase
+
+    if invert_match
+      if criteria_match
+        assign criteria_match = false
+      else
+        assign criteria_match = true
+      endif
+    endif
+
+    unless criteria_match
+      assign render = false
+    endunless
+  endif
+-%}
+{%- if render -%}
+  {{- content -}}
+{%- elsif request.design_mode and settings.conditional_display_always_show_in_editor -%}
+  <div class="conditional-display-hidden">
+    {{- content -}}
+
+    <span class="conditional-display-hidden-icon">
+      <svg class="icon icon-hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M9.977 2.751a7.6 7.6 0 0 0-1.977-.251c-2.444 0-4.196 1.045-5.325 2.233a7.2 7.2 0 0 0-1.243 1.773c-.26.532-.432 1.076-.432 1.494s.171.962.432 1.494c.172.353.4.733.687 1.115l1.074-1.074a5 5 0 0 1-.414-.7c-.221-.453-.279-.753-.279-.835s.058-.382.279-.835a5.7 5.7 0 0 1 .983-1.398c.89-.937 2.264-1.767 4.238-1.767q.36 0 .693.036z"></path><path fill-rule="evenodd" d="M2.25 12.6a.75.75 0 0 0 1.067 1.053l1.062-1.061c.975.543 2.177.908 3.621.908 2.45 0 4.142-1.05 5.24-2.242 1.078-1.17 1.588-2.476 1.738-3.076a.75.75 0 0 0 0-.364c-.15-.6-.66-1.906-1.738-3.076a7 7 0 0 0-.51-.502l.923-.923a.749.749 0 0 0-1.053-1.068l-.008.008-10.335 10.336zm5.75-.6c-.978 0-1.809-.204-2.506-.523l1.108-1.109a2.75 2.75 0 0 0 3.767-3.766l1.298-1.299q.254.221.47.455a6.4 6.4 0 0 1 1.332 2.242 6.4 6.4 0 0 1-1.332 2.242c-.86.933-2.17 1.758-4.137 1.758m0-2.75q-.13-.001-.254-.026l1.478-1.478a1.25 1.25 0 0 1-1.224 1.504"></path></svg>
+    </span>
+  </div>
+{%- endif -%}

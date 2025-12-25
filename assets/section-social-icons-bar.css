@@ -1,0 +1,65 @@
+.social-icons-bar {
+  position: relative;
+  border-block: 1px solid var(--social-icons-border-color, var(--color-border, #bab7b1));
+}
+
+.social-icons-bar--padding {
+  padding-block-start: var(--social-icons-mobile-top, 12px);
+  padding-block-end: var(--social-icons-mobile-bottom, 12px);
+}
+
+.social-icons-bar--margin {
+  margin-block-start: var(--social-icons-mobile-top, 12px);
+  margin-block-end: var(--social-icons-mobile-bottom, 12px);
+}
+
+.social-icons-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icons-bar__list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rem; /* ~128px to match Figma spacing */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social-icons-bar__item {
+    display: flex;
+    align-items: center;
+}
+
+.social-icons-bar__item a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icons-bar__icon {
+  width: 21px;
+  height: 21px;
+}
+
+@media screen and (max-width: 749px) {
+  .social-icons-bar__list {
+    gap: 3.5rem;
+    padding-inline: 1rem;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .social-icons-bar--padding {
+    padding-block-start: var(--social-icons-desktop-top, 18px);
+    padding-block-end: var(--social-icons-desktop-bottom, 18px);
+  }
+
+  .social-icons-bar--margin {
+    margin-block-start: var(--social-icons-desktop-top, 18px);
+    margin-block-end: var(--social-icons-desktop-bottom, 18px);
+  }
+}

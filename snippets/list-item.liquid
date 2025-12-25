@@ -1,0 +1,45 @@
+{%- doc -%}
+  Renders a list item.
+
+  @param {object} [block] - The block object.
+  @param {string} [icon] - The icon to display.
+  @param {string} [heading] - The list item heading.
+  @param {string} [content] - The list item content.
+  @param {string} [list_item_element] - The list item element.
+{%- enddoc -%}
+
+{%- liquid
+  assign icon = icon | default: block.settings.icon
+  assign heading = heading | default: block.settings.heading
+  assign content = content | default: block.settings.content
+  assign list_item_element = list_item_element | default: 'h3'
+-%}
+
+{%- if heading != blank or content != blank -%}
+  <li
+    class="list-item"
+    data-testid="list-item"
+    {% if block %}{{ block.shopify_attributes }}{% endif %}
+  >
+    {%- if icon != 'none' -%}
+      {% render 'icon-or-image',
+        icon: icon,
+        width: 20,
+        class_name: 'list-item__icon'
+      %}
+    {%- endif -%}
+    <div class="list-item__main">
+      {%- if heading != blank -%}
+        <{{ list_item_element }} class="list-item__heading heading h5">
+          {{ heading }}
+        </{{ list_item_element }}>
+      {%- endif -%}
+
+      {%- if content != blank -%}
+        <div class="list-item__content">
+          {{ content }}
+        </div>
+      {%- endif -%}
+    </div>
+  </li>
+{%- endif -%}

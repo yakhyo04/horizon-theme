@@ -1,0 +1,192 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:names.footer",
+  "sections": {
+    "as_seen_in": {
+      "type": "as-seen-in",
+      "blocks": {
+        "logo_VJeQez": {
+          "type": "logo",
+          "settings": {
+            "logo_image": "shopify://shop_images/logo_f81457a6-e953-4544-b903-6937ae031ad0.png",
+            "alt": "TODAY",
+            "accessible_name": "",
+            "link": "",
+            "open_in_new_tab": true,
+            "max_height": 52
+          }
+        },
+        "logo_mDieph": {
+          "type": "logo",
+          "settings": {
+            "logo_image": "shopify://shop_images/Logo-1_43426ad9-02f8-4e0a-b868-4c24c821ebb1.png",
+            "alt": "REFINERY29",
+            "accessible_name": "",
+            "link": "",
+            "open_in_new_tab": true,
+            "max_height": 52
+          }
+        },
+        "logo_bY6qzF": {
+          "type": "logo",
+          "settings": {
+            "logo_image": "shopify://shop_images/Logo-2.png",
+            "alt": "marie claire",
+            "accessible_name": "",
+            "link": "",
+            "open_in_new_tab": true,
+            "max_height": 16
+          }
+        },
+        "logo_CC9g7A": {
+          "type": "logo",
+          "settings": {
+            "logo_image": "shopify://shop_images/Logo-3.png",
+            "alt": "Forbes",
+            "accessible_name": "",
+            "link": "",
+            "open_in_new_tab": true,
+            "max_height": 52
+          }
+        },
+        "logo_mYwEYK": {
+          "type": "logo",
+          "settings": {
+            "logo_image": "shopify://shop_images/Logo-4.png",
+            "alt": "Weekly US",
+            "accessible_name": "",
+            "link": "",
+            "open_in_new_tab": true,
+            "max_height": 52
+          }
+        }
+      },
+      "block_order": [
+        "logo_VJeQez",
+        "logo_mDieph",
+        "logo_bY6qzF",
+        "logo_CC9g7A",
+        "logo_mYwEYK"
+      ],
+      "name": "As seen in",
+      "settings": {
+        "heading": "AS SEEN IN",
+        "logos_aria_label": "Publications where our brand has been featured",
+        "color_scheme": "",
+        "spacing_type": "padding",
+        "desktop_spacing_top": 24,
+        "desktop_spacing_bottom": 24,
+        "mobile_spacing_top": 24,
+        "mobile_spacing_bottom": 24
+      }
+    },
+    "social-icons-bar": {
+      "type": "social-icons-bar",
+      "settings": {
+        "color_scheme": "",
+        "nav_aria_label": "Follow us on social media",
+        "spacing_type": "padding",
+        "desktop_spacing_top": 18,
+        "desktop_spacing_bottom": 18,
+        "mobile_spacing_top": 12,
+        "mobile_spacing_bottom": 12,
+        "tiktok_url": "https://www.tiktok.com/@shop12thtribe",
+        "pinterest_url": "https://www.pinterest.com/12thTribe/",
+        "instagram_url": "https://www.instagram.com/shop12thtribe/",
+        "facebook_url": "https://www.facebook.com/12thtribeshop"
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "footer_links_columns_DfV7J8": {
+          "type": "footer-links-columns",
+          "name": "Footer links columns",
+          "settings": {
+            "logo": "shopify://shop_images/Logo-vector.png",
+            "logo_alt": "12th Tribe",
+            "logo_link": "/",
+            "navigation_aria_label": "Footer primary navigation",
+            "heading_1": "Customer care",
+            "menu_1": "customer-care",
+            "heading_2": "About",
+            "menu_2": "contact",
+            "heading_3": "Information",
+            "menu_3": "information",
+            "heading_4": "Contact us",
+            "menu_4": "our-story",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "footer_email_signup_gwLUc9": {
+          "type": "footer-email-signup",
+          "name": "Footer email signup",
+          "settings": {
+            "heading": "Stay <em>Connected</em>",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "footer_links_columns_DfV7J8",
+        "footer_email_signup_gwLUc9"
+      ],
+      "name": "t:names.footer",
+      "settings": {
+        "section_width": "page-width",
+        "gap": 20,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 36,
+        "padding-block-end": 36,
+        "spacing_type": "padding",
+        "desktop_spacing_top": 36,
+        "desktop_spacing_bottom": 36,
+        "mobile_spacing_top": 0,
+        "mobile_spacing_bottom": 24
+      }
+    },
+    "footer_copyright_bar": {
+      "type": "footer-copyright-bar",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "left_text": "",
+        "right_text": "UNITED STATES (USD$)",
+        "aria_label": "Site copyright and region information",
+        "show_country": true,
+        "country_selector_style": true,
+        "show_language": true,
+        "localization_font": "heading",
+        "localization_font_size": "0.75rem",
+        "localization_position": "right",
+        "spacing_type": "padding",
+        "desktop_spacing_top": 8,
+        "desktop_spacing_bottom": 8,
+        "mobile_spacing_top": 8,
+        "mobile_spacing_bottom": 8
+      }
+    }
+  },
+  "order": [
+    "as_seen_in",
+    "social-icons-bar",
+    "footer",
+    "footer_copyright_bar"
+  ]
+}

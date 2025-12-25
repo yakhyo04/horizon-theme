@@ -1,0 +1,35 @@
+<script
+  src="{{ 'theme-editor.js' | asset_url }}"
+  type="module"
+  defer="defer"
+></script>
+
+<style>
+  .shopify-design-mode {
+    .conditional-display-hidden {
+      position: relative;
+
+      .conditional-display-hidden-icon {
+        color: rebeccapurple;
+        display: block;
+        align-content: center;
+        /* background: linear-gradient(to right, transparent, rgb(var(--color-background))); */
+        /* background: linear-gradient(to right, transparent, cubic-bezier(0.55, 0.085, 0.68, 0.53), white); */
+
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 100%;
+        z-index: 10;
+        margin-inline-start: 0.25rem;
+        opacity: 0.5;
+        width: 12px;
+      }
+
+      &:hover {
+        .conditional-display-hidden-icon {
+          opacity: 1;
+        }
+      }
+    }
+  }
+</style>

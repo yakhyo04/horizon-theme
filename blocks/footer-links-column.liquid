@@ -1,0 +1,106 @@
+{{ 'block-footer-links-column.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign block_settings = block.settings
+  assign menu = block_settings.menu
+  assign heading = block_settings.heading | default: menu.title
+%}
+
+{% if menu != blank or heading != blank %}
+  <nav
+    class="footer-links-column spacing-style"
+    aria-label="{{ heading | strip | escape }}"
+    style="{% render 'spacing-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    {% if heading != blank %}
+      <h2 class="footer-links-column__heading">
+        {{ heading }}
+      </h2>
+    {% endif %}
+
+    {% if menu %}
+      <ul class="footer-links-column__list" role="list">
+        {% for link in menu.links %}
+          <li class="footer-links-column__item">
+            <a
+              class="footer-links-column__link"
+              href="{{ link.url }}"
+            >
+              {{ link.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </nav>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Footer links column",
+  "tag": null,
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Customer care"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer links column"
+    }
+  ]
+}
+{% endschema %}

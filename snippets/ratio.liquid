@@ -1,0 +1,34 @@
+{%- doc -%}
+  @description Calculates the ratio based on the section settings
+
+  @param {string} image_ratio - The ratio to calculate
+{%- enddoc -%}
+{%- liquid
+  assign ratio = 1
+  case image_ratio
+    when 'landscape'
+      assign ratio = settings.image_aspect_ratio_landscape
+    when 'portrait'
+      assign ratio = settings.image_aspect_ratio_portrait
+    when 'square'
+      assign ratio = 1
+    when '16_9'
+      assign ratio = 1.777
+    when '4_3'
+      assign ratio = 1.333
+    when '3_2'
+      assign ratio = 1.5
+    when '2_3'
+      assign ratio = 0.667
+    when '9_16'
+      assign ratio = 0.5625
+    else
+      assign ratio = 1
+  endcase
+
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
+  
+  echo ratio
+-%}
