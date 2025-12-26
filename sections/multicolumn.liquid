@@ -1,0 +1,225 @@
+{{ 'multicolumn.css' | asset_url | stylesheet_tag }}
+
+<div class="multicolumn">
+  <div class="multicolumn__wrapper section section--{{ section.settings.section_width }}">
+    <div class="multicolumn__items" style="--image-ratio: {% render 'ratio', image_ratio: section.settings.image_ratio %};">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+<style>
+  #shopify-section-{{ section.id }} .multicolumn {
+    padding-top: {{ section.settings.top }}px;
+    padding-bottom: {{ section.settings.bottom }}px;
+  }
+
+  #shopify-section-{{ section.id }} .multicolumn__items {
+    grid-template-columns: repeat({{ section.settings.columns_per_row }}, 1fr);
+    gap: {{ section.settings.gap_per_row }}px;
+  }
+
+  @media only screen and (max-width: 750px) {
+    #shopify-section-{{ section.id }} .multicolumn {
+      padding-top: {{ section.settings.mobile_top }}px;
+      padding-bottom: {{ section.settings.mobile_bottom }}px;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Multicolumn",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+       {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+      {
+        "type": "range",
+        "id": "columns_per_row",
+        "label": "Columns per row",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "range",
+        "id": "gap_per_row",
+        "label": "Gap per row",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 8,
+        "unit": "px"
+      },
+      {
+      "type": "header",
+      "content": "t:content.image_ratio"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "square",
+          "label": "t:options.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.portrait"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.landscape"
+        },
+        {
+        "value": "auto",
+          "label": "Auto"
+        },
+        {
+          "value": "16_9",
+          "label": "16:9"
+        },
+        {
+          "value": "4_3",
+          "label": "4:3"
+        },
+        {
+          "value": "3_2",
+          "label": "3:2"
+        },
+        {
+          "value": "2_3",
+          "label": "2:3"
+        },
+        {
+          "value": "9_16",
+          "label": "9:16"
+        }
+      ],
+      "default": "square",
+      "label": "t:settings.aspect_ratio"
+    },
+    {
+        "type": "header",
+        "content": "Padding"
+      },
+    {
+      "type": "range",
+      "id": "top",
+      "label": "Top (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "bottom",
+      "label": "Bottom (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_top",
+      "label": "Top (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom",
+      "label": "Bottom (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    ],
+    "blocks": [
+        {
+            "type": "multicolumn-block",
+        }
+    ],
+    "presets": [
+      {
+        "name": "Multicolumn",
+        "settings": {},
+        "blocks": {
+        "my_test_block_xf74cM": {
+          "type": "multicolumn-block",
+          "name": "Multicolumn Block",
+          "settings": {
+            "position": "middle-center",
+            "column_type": "image",
+            "video_autoplay": true,
+            "video_loop": true
+          },
+          "blocks": {
+            "multicolumn-section-header": {
+              "type": "section-header",
+              "static": true,
+              "settings": {
+                "width": "fit-content",
+                "max_width": "normal"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": []
+        },
+        "my_test_block_Bngq86": {
+          "type": "multicolumn-block",
+          "name": "Multicolumn Block",
+          "settings": {
+            "position": "middle-center",
+            "column_type": "image",
+            "video_autoplay": true,
+            "video_loop": true
+          },
+          "blocks": {
+            "multicolumn-section-header": {
+              "type": "section-header",
+              "static": true,
+              "settings": {
+                "width": "fit-content",
+                "max_width": "normal"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": []
+        },},
+        "block_order": ["my_test_block_xf74cM","my_test_block_Bngq86"]
+      }
+    ]
+  }
+
+{% endschema %}
