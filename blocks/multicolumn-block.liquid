@@ -23,16 +23,16 @@
     <div class="multicolumn__media video-wrapper multicolumn__video--desktop">
       {{ block.settings.desktop_video | video_tag: image_size: '2000x', autoplay: block.settings.video_autoplay, loop: block.settings.video_loop, controls: false, class: 'mul-desktop-video' }}
       <button type="button" class="mul-video-toggle" aria-label="Play video" data-playing="{{ block.settings.video_autoplay }}">
-        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6zm8-14v14h4V5z"></path></svg>
+        {% render 'icon', icon: 'icon-play' %}
+        {% render 'icon', icon: 'icon-pause' %}
       </button>
     </div>
 
     <div class="multicolumn__media video-wrapper multicolumn__video--mobile">
       {{ block.settings.mobile_video | video_tag: image_size: '2000x', autoplay: block.settings.video_autoplay, loop: block.settings.video_loop, controls: false, class: 'mul-mobile-video' }}
       <button type="button" class="mul-video-toggle" aria-label="Play video" data-playing="{{ block.settings.video_autoplay }}">
-        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6zm8-14v14h4V5z"></path></svg>
+        {% render 'icon', icon: 'icon-play' %}
+        {% render 'icon', icon: 'icon-pause' %}
       </button>
     </div>
   {% endif %}
