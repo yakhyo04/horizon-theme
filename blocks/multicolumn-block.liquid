@@ -1,0 +1,164 @@
+{{ 'multicolumn.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'multicolumn.js' | asset_url }}" defer></script>
+
+{%  liquid
+    assign width = '100%'
+  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560'
+  assign alt = closest.collection.title | default: closest.collection.title
+  assign media_width_desktop = '100vw'
+  assign media_width_mobile = '100vw'
+  assign sizes = 'auto, (min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
+%}
+
+<div class="multicolumn__item">
+  {% if block.settings.column_type == "image" %}
+    {% if block.settings.desktop_image and block.settings.mobile_image %}
+      {{ block.settings.desktop_image | image_url: width: 3000 | image_tag: class: 'mul-desktop-img', width: width, widths: widths, sizes: sizes, alt: alt }}
+      {{ block.settings.mobile_image | image_url: width: 750 | image_tag: class: 'mul-mobile-img', width: width, widths: widths, sizes: sizes, alt: alt }}
+    {% else %}
+      {{ placeholder | default: 'hero-apparel-2' | placeholder_svg_tag: 'hero__image' }}
+    {% endif %}
+
+  {% else %}
+    <div class="multicolumn__media video-wrapper multicolumn__video--desktop">
+      {{ block.settings.desktop_video | video_tag: image_size: '2000x', autoplay: block.settings.video_autoplay, loop: block.settings.video_loop, controls: false, class: 'mul-desktop-video' }}
+      <button type="button" class="mul-video-toggle" aria-label="Play video" data-playing="{{ block.settings.video_autoplay }}">
+        {% render 'icon', icon: 'icon-play' %}
+        {% render 'icon', icon: 'icon-pause' %}
+      </button>
+    </div>
+
+    <div class="multicolumn__media video-wrapper multicolumn__video--mobile">
+      {{ block.settings.mobile_video | video_tag: image_size: '2000x', autoplay: block.settings.video_autoplay, loop: block.settings.video_loop, controls: false, class: 'mul-mobile-video' }}
+      <button type="button" class="mul-video-toggle" aria-label="Play video" data-playing="{{ block.settings.video_autoplay }}">
+        {% render 'icon', icon: 'icon-play' %}
+        {% render 'icon', icon: 'icon-pause' %}
+      </button>
+    </div>
+  {% endif %}
+
+  <div class="multicolumn__content {{ block.settings.position }}">
+    <div class="multicolumn__section-header">   
+    {% content_for 'block', type: 'section-header',id:  "multicolumn-section-header"   %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "My First Block",
+    "blocks": [],
+    "settings": [
+        {
+        "type": "select",
+        "id": "position",
+        "label": "Content Position",
+        "default": "middle-center",
+        "options": [
+            {
+                "value": "top-left",
+                "label": "Top Left"
+            },
+            {
+                "value": "top-center",
+                "label": "Top Center"
+            },
+            {
+                "value": "top-right",
+                "label": "Top Right"
+            },
+            {
+                "value": "middle-left",
+                "label": "Middle Left"
+            },
+            {
+                "value": "middle-center",
+                "label": "Middle Center"
+            },
+            {
+                "value": "middle-right",
+                "label": "Middle Right"
+            },
+            {
+                "value": "bottom-left",
+                "label": "Bottom Left"
+            },
+            {
+                "value": "bottom-center",
+                "label": "Bottom Center"
+            },
+            {
+                "value": "bottom-right",
+                "label": "Bottom Right"
+            }
+        ]
+    },
+          {
+            "type": "select",
+            "id": "column_type",
+            "label": "Column Type",
+            "default": "image",
+            "options": [
+              {
+                "value": "image",
+                "label": "Image"
+              }, {
+                "value": "video",
+                "label": "Video"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "Image Settings",
+            "visible_if": "{{ block.settings.column_type == 'image' }}"
+          },
+          {
+            "type": "image_picker",
+            "id": "desktop_image",
+            "label": "Desktop Image",
+            "visible_if": "{{ block.settings.column_type == 'image' }}"
+          },
+          {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile Image",
+            "visible_if": "{{ block.settings.column_type == 'image' }}"
+          }, {
+            "type": "header",
+            "content": "Video Settings",
+            "visible_if": "{{ block.settings.column_type == 'video' }}"
+          }, {
+            "type": "video",
+            "id": "desktop_video",
+            "label": "Desktop Video",
+            "visible_if": "{{ block.settings.column_type == 'video' }}"
+          }, {
+            "type": "video",
+            "id": "mobile_video",
+            "label": "Mobile Video",
+            "visible_if": "{{ block.settings.column_type == 'video' }}"
+          }, {
+            "label": "Autoplay",
+            "type": "checkbox",
+            "id": "video_autoplay",
+            "default": true,
+            "info": "Videos will be muted by default",
+            "visible_if": "{{ block.settings.column_type == 'video' }}"
+          }, {
+            "label": "Loop",
+            "type": "checkbox",
+            "id": "video_loop",
+            "default": true,
+            "visible_if": "{{ block.settings.column_type == 'video' }}"
+          },
+        ],
+    "presets": [
+      {
+        "name": "Multicolumn Block",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
